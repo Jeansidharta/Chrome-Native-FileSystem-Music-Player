@@ -1,0 +1,25 @@
+{
+  "name": "music-player",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "export": "next export",
+    "build-export": "npm run build && npm run export",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "9.4.4",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "react-toastify": "^6.0.8",
+    "styled-components": "^5.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^14.0.22",
+    "@types/styled-components": "^5.1.1",
+    "babel-plugin-styled-components": "^1.10.7",
+    "typescript": "^3.9.6"
+  }
+}
