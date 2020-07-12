@@ -3,6 +3,7 @@ import React from 'react';
 import styled, { css } from 'styled-components';
 import Images from '../../constants/images';
 import { usePlayingMusic } from '../../contexts/playing-music';
+import { useVolume } from '../../contexts/volume';
 
 const Root = styled.footer`
 	border-top: 1px solid rgba(0, 0, 0, 0.3);
@@ -44,13 +45,14 @@ const Footer = () => {
 	const {
 		pause,
 		resume,
-		setVolume,
-		musicStatus: { playing, volume }
+		musicStatus: { playing }
 	} = usePlayingMusic();
 
-	function updateVolume (event: React.ChangeEvent<HTMLInputElement>) {
+	const { updateVolume, volume } = useVolume();
+
+	function handleVolumeSliderChange (event: React.ChangeEvent<HTMLInputElement>) {
 		const value = event.target.value;
-		setVolume(Number(value));
+		updateVolume(Number(value));
 	}
 
 	React.useEffect(() => {
@@ -74,7 +76,7 @@ const Footer = () => {
 				min="0"
 				max="1"
 				step="0.01"
-				onChange={updateVolume}
+				onChange={handleVolumeSliderChange}
 				ref={volumeSliderRef}
 			/>
 		</Root>
