@@ -30,7 +30,7 @@ const MyApp: MyAppComponent = ({ Component, pageProps }) => {
 			<Providers>
 				<div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
 					<Navbar />
-					<div style={{ height: '100%' }}>
+					<div style={{ height: '100%', overflowY: 'auto' }}>
 						<Component {...pageProps} />
 					</div>
 					<Footer />
