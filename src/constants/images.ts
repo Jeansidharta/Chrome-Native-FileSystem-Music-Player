@@ -1,8 +1,8 @@
-import styled from 'styled-components';
+import styled, { FlattenSimpleInterpolation } from 'styled-components';
 
 const BaseImage = styled.img`
 	object-fit: center;
-	${({ css }) => css}
+	${(props: { css: FlattenSimpleInterpolation }) => props.css}
 `;
 
 const Images = {
