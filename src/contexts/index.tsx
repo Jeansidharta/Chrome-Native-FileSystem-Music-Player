@@ -2,6 +2,7 @@ import React from 'react';
 
 import { FileSystemProvider } from './file-system';
 import { PlayingMusicProvider } from './playing-music';
+import { VolumeProvider } from './volume';
 
 type ProvidersProps = React.PropsWithChildren<{}>;
 
@@ -11,7 +12,9 @@ const Providers: ProvidersComponent = ({ children }) => {
 	return (
 		<FileSystemProvider>
 			<PlayingMusicProvider>
-				{children}
+				<VolumeProvider>
+					{children}
+				</VolumeProvider>
 			</PlayingMusicProvider>
 		</FileSystemProvider>
 	);

@@ -60,11 +60,11 @@ const MusicItem: MusicItemComponent = ({ musicFileHandler }) => {
 		}
 	}
 
-	return (
+	return React.useMemo(() => (
 		<Root onClick={handleClick}>
 			<MusicName>{musicFileHandler.name}</MusicName>
 		</Root>
-	);
+	), [play, musicFileHandler]);
 }
 
 export default MusicItem;

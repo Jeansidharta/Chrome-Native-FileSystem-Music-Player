@@ -2,36 +2,30 @@ import React from 'react';
 
 type PlayingMusicContext = {
 	play: (file: File) => void,
-	musicURL: string | null,
 	pause: () => void,
 	resume: () => void,
-	setVolume: (newVolume: number) => void,
 	musicStatus: MusicStatusState,
 }
 
 type MusicStatusState = {
+	musicURL: string | null,
 	playing: boolean,
-	volume: number,
 };
 
-const defaulMusicStatus: MusicStatusState = {
+const defaultMusicStatus: MusicStatusState = {
+	musicURL: null,
 	playing: true,
-	volume: 1,
-};
+}
 
 const playingMusicContext = React.createContext<PlayingMusicContext>(null as any);
 
-const MAX_VOLUME = 1;
-const MIN_VOLUME = 0;
-
 export function PlayingMusicProvider ({ ...props }) {
-	const [musicURL, setMusicURL] = React.useState<string | null>(null);
-	const [musicStatus, setMusicStatus] = React.useState<MusicStatusState>(defaulMusicStatus);
+	const [musicStatus, setMusicStatus] = React.useState<MusicStatusState>(defaultMusicStatus);
 
 	function play (file: File) {
-		if (musicURL) URL.revokeObjectURL(musicURL);
-		const url = URL.createObjectURL(file);
-		setMusicURL(url);
+		if (musicStatus.musicURL) URL.revokeObjectURL(musicStatus.musicURL);
+		const musicURL = URL.createObjectURL(file);
+		setMusicStatus({ ...musicStatus, musicURL });
 	}
 
 	function pause () {
@@ -42,21 +36,12 @@ export function PlayingMusicProvider ({ ...props }) {
 		setMusicStatus({ ...musicStatus, playing: true });
 	}
 
-	function setVolume (newVolume: number) {
-		setMusicStatus({
-			...musicStatus,
-			volume: Math.max(MIN_VOLUME, Math.min(MAX_VOLUME, newVolume)),
-		});
-	}
-
 	return (
 		<playingMusicContext.Provider {...props} value={{
 			play,
 			pause,
 			resume,
-			setVolume,
 			musicStatus,
-			musicURL,
 		}} />
 	);
 }

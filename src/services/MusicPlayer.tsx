@@ -1,8 +1,10 @@
 import React from 'react';
 import { usePlayingMusic } from '../contexts/playing-music';
+import { useVolume } from '../contexts/volume';
 
 const MusicPlayer = () => {
-	const { musicURL, musicStatus } = usePlayingMusic();
+	const { musicStatus: { musicURL, playing } } = usePlayingMusic();
+	const { volume } = useVolume();
 	const audioRef = React.useRef<HTMLAudioElement>();
 
 	React.useEffect(() => {
@@ -24,11 +26,11 @@ const MusicPlayer = () => {
 	React.useEffect(() => {
 		if (!audioRef.current) return;
 
-		if (musicStatus.playing) audioRef.current.play();
+		if (playing) audioRef.current.play();
 		else audioRef.current.pause();
 
-		audioRef.current.volume = musicStatus.volume;
-	}, [musicStatus]);
+		audioRef.current.volume = volume;
+	}, [playing, volume]);
 
 	return null;
 }
