@@ -5,6 +5,7 @@ import Navbar from '../components/layout/navbar';
 import Providers from '../contexts';
 import MusicPlayer from '../services/MusicPlayer';
 import Footer from '../components/layout/footer';
+import 'react-toastify/dist/ReactToastify.css';
 
 type MyAppProps = React.PropsWithoutRef<{
 	Component: any,
