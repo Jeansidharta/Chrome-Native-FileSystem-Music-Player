@@ -14,7 +14,7 @@ The core concept of this project is to create a simple Music Player that reads i
 
 First, you must be using Chrome. This code is currently being written using version 83.0.4103.116, 64bits of Chrome. It may or may not work in different versions, given how volitile this API currently is.
 
-Second, you must set Chrome's [Native File System API](chrome://flags/#native-file-system-api) flag to `enabled` (either click the link above, or go to [chrome://flags](chrome://flags) and search for it).
+Second, you must set Chrome's Native File System API flag to `enabled`. Copy this in your URL bar: `chrome://flags/#native-file-system-api` to jump directly to the flag. Alternatively, you could just open `chrome://flags` and search for the flag there.
 
 Third, you must have NodeJS and NPM installed.
 
