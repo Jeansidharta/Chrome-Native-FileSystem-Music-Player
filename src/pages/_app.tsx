@@ -4,6 +4,7 @@ import Head from 'next/head';
 import Navbar from '../components/layout/navbar';
 import Providers from '../contexts';
 import MusicPlayer from '../services/MusicPlayer';
+import Footer from '../components/layout/footer';
 
 type MyAppProps = React.PropsWithoutRef<{
 	Component: any,
@@ -26,9 +27,12 @@ const MyApp: MyAppComponent = ({ Component, pageProps }) => {
 
 			<ToastContainer hideProgressBar />
 			<Providers>
-				<Navbar />
-				<div style={{ height: '90vh' }}>
-					<Component {...pageProps} />
+				<div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+					<Navbar />
+					<div style={{ height: '100%' }}>
+						<Component {...pageProps} />
+					</div>
+					<Footer />
 				</div>
 				<MusicPlayer />
 			</Providers>
