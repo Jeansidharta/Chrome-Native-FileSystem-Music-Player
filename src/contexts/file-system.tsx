@@ -1,7 +1,8 @@
 import React from 'react';
+import { openDirectory } from '../libs/file-helpers';
 
 type FileSystemContext = {
-	setFileSystem: React.Dispatch<React.SetStateAction<FileSystemState | null>>,
+	requestDirectoryAccess: () => void,
 	fileSystem: FileSystemState | null,
 }
 
@@ -15,9 +16,21 @@ type FileSystemState = {
 export function FileSystemProvider ({ ...props }) {
 	const [fileSystem, setFileSystem] = React.useState<FileSystemState | null>(null);
 
+	async function requestDirectoryAccess () {
+		const dir = await openDirectory().catch(e => console.error(e));
+		if (!dir) return;
+
+		const files = [];
+		for await(const file of dir.getEntries()) {
+			files.push(file);
+		}
+
+		setFileSystem({ directory: dir, music: files });
+	}
+
 	return (
 		<fileSystemContext.Provider {...props} value={{
-			setFileSystem,
+			requestDirectoryAccess,
 			fileSystem
 		}} />
 	);
