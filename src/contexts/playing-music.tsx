@@ -45,7 +45,7 @@ export function PlayingMusicProvider ({ ...props }) {
 	function setVolume (newVolume: number) {
 		setMusicStatus({
 			...musicStatus,
-			volume: Math.max(MAX_VOLUME, Math.min(MIN_VOLUME, newVolume)),
+			volume: Math.max(MIN_VOLUME, Math.min(MAX_VOLUME, newVolume)),
 		});
 	}
 
