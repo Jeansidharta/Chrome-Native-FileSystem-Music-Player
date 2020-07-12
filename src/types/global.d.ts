@@ -20,15 +20,15 @@ declare interface FileSystemHandle {
 
 	isSameEntry(other: FileSystemHandle): Promise<boolean>;
 
-	queryPermission(descriptor?: { writable: bool }): Promise<PermissionState>;
-	requestPermission(descriptor?: { writable: bool }): Promise<PermissionState>;
+	queryPermission(descriptor?: { writable: boolean }): Promise<PermissionState>;
+	requestPermission(descriptor?: { writable: boolean }): Promise<PermissionState>;
 };
 
 
 // [Exposed=(Window,Worker), SecureContext, Serializable]
 declare interface FileSystemFileHandle extends FileSystemHandle {
 	getFile(): Promise<File>,
-	createWritable(options?: { keepExistingData: bool }): Promise<FileSystemWritableFileStream>,
+	createWritable(options?: { keepExistingData: boolean }): Promise<FileSystemWritableFileStream>,
 	readonly isDirectory: false,
 	readonly isFile: true,
 };
