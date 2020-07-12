@@ -4,7 +4,7 @@ import { useFileSystem } from '../../contexts/file-system';
 import MusicItem from './music-item';
 import styled from 'styled-components';
 
-const Root = styled.main`
+const MainRoot = styled.main`
 	padding: 32px;
 `;
 
@@ -20,12 +20,12 @@ function Home () {
 	}
 
 	return (
-		<Root>
+		<MainRoot>
 			<Head>
 				<title>Bom dia!</title>
 			</Head>
 			{renderMusicItems()}
-		</Root>
+		</MainRoot>
 	);
 }
 

@@ -24,12 +24,12 @@ const MusicPlayer = () => {
 	}, [musicURL, audioRef.current]);
 
 	React.useEffect(() => {
-		if (!audioRef.current) return;
+		if (!audioRef.current || !musicURL) return;
 
 		if (playing) audioRef.current.play();
 		else audioRef.current.pause();
 
-		audioRef.current.volume = volume;
+		if (playing) audioRef.current.volume = volume;
 	}, [playing, volume]);
 
 	return null;
