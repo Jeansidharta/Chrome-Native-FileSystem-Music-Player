@@ -30,7 +30,7 @@ type MusicItemComponent = React.FunctionComponent<MusicItemProps>;
 const MusicItem: MusicItemComponent = ({ musicFileHandler, onClick }) => {
 	const { currentlyPlaying } = usePlayingMusic();
 
-	const isSame = currentlyPlaying?.fileHandle.name === musicFileHandler.name;
+	const isSame = currentlyPlaying?.handler.name === musicFileHandler.name;
 
 	return (
 		<Root onClick={onClick} isSame={isSame}>
