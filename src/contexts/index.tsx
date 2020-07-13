@@ -3,6 +3,7 @@ import React from 'react';
 import { FileSystemProvider } from './file-system';
 import { PlayingMusicProvider } from './playing-music';
 import { VolumeProvider } from './volume';
+import { SortFilterProvider } from './sort-filter';
 
 type ProvidersProps = React.PropsWithChildren<{}>;
 
@@ -13,7 +14,9 @@ const Providers: ProvidersComponent = ({ children }) => {
 		<FileSystemProvider>
 			<PlayingMusicProvider>
 				<VolumeProvider>
-					{children}
+					<SortFilterProvider>
+						{children}
+					</SortFilterProvider>
 				</VolumeProvider>
 			</PlayingMusicProvider>
 		</FileSystemProvider>
