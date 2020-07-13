@@ -37,6 +37,16 @@ const Images = {
 			alt: 'Double Previous Music Button Icon',
 			...props,
 		}))``,
+		Sort: styled(BaseImage).attrs(props => ({
+			src: '/icons/sort.svg',
+			alt: 'Sort Icon',
+			...props,
+		}))``,
+		Filter: styled(BaseImage).attrs(props => ({
+			src: '/icons/filter.svg',
+			alt: 'Filter Icon',
+			...props,
+		}))``,
 	}
 }
 
