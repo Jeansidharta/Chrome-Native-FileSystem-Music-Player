@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useFileSystem } from '../../contexts/file-system';
-import { openDirectory } from '../../libs/file-helpers';
 
 const Root = styled.header`
 	height: 10vh;
@@ -17,26 +16,11 @@ const Button = styled.button`
 `;
 
 const Navbar = () => {
-	const { setFileSystem } = useFileSystem();
-
-	async function openFolder () {
-		let dir;
-		try {
-			dir = await openDirectory();
-		} catch (e) {
-			console.error(e);
-			return;
-		}
-		const files = [];
-		for await(const file of dir.getEntries()) {
-			files.push(file);
-		}
-		setFileSystem({ directory: dir, music: files });
-	}
+	const { requestDirectoryAccess } = useFileSystem();
 
 	return (
 		<Root>
-			<Button onClick={openFolder}>Open folder</Button>
+			<Button onClick={requestDirectoryAccess}>Select folder</Button>
 		</Root>
 	);
 }

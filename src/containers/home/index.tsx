@@ -3,6 +3,7 @@ import Head from 'next/head';
 import { useFileSystem } from '../../contexts/file-system';
 import MusicItem from './music-item';
 import styled from 'styled-components';
+import { usePlayingMusic } from '../../contexts/playing-music';
 
 const MainRoot = styled.main`
 	padding: 32px;
@@ -10,12 +11,21 @@ const MainRoot = styled.main`
 
 function Home () {
 	const { fileSystem } = useFileSystem();
+	const { setQueue } = usePlayingMusic();
+
+	function handleMusicClick (musicIndex: number) {
+		setQueue(fileSystem!.music.slice(musicIndex), true);
+	}
 
 	function renderMusicItems () {
 		if (!fileSystem) return <>Please, open a music folder.</>;
 
 		return fileSystem.music.map((musicFileHandler, index) =>
-			<MusicItem key={index} musicFileHandler={musicFileHandler} />
+			<MusicItem
+				key={index}
+				musicFileHandler={musicFileHandler}
+				onClick={() => handleMusicClick(index)}
+			/>
 		);
 	}
 

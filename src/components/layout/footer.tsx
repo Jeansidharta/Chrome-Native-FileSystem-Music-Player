@@ -7,7 +7,7 @@ import { useVolume } from '../../contexts/volume';
 
 const Root = styled.footer`
 	border-top: 1px solid rgba(0, 0, 0, 0.3);
-	height: 15vh;
+	padding: 16px 0;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -18,6 +18,7 @@ const ControlsContainer = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	margin: 8px 0;
 `;
 
 const ActionButtonStyles = css`
@@ -28,9 +29,13 @@ const ActionButtonStyles = css`
 `;
 
 const VolumeSlider = styled.input.attrs(props => ({ type: 'range', ...props }))`
-	margin-top: 12px;
 	max-width: 300px;
 	width: 100%;
+`;
+
+const MusicName = styled.p`
+	margin: 0;
+	padding: 8px 0;
 `;
 
 const PlayButton = styled(Images.Icons.PlayButton).attrs(() => ({ css: ActionButtonStyles}))``;
@@ -45,7 +50,7 @@ const Footer = () => {
 	const {
 		pause,
 		resume,
-		musicStatus: { playing }
+		musicStatus: { playing, currentlyPlaying }
 	} = usePlayingMusic();
 
 	const { updateVolume, volume } = useVolume();
@@ -60,8 +65,16 @@ const Footer = () => {
 		volumeSliderRef.current.value = volume.toString();
 	}, [volume]);
 
+	function renderCurrentMusicInfo () {
+		const musicName = currentlyPlaying?.fileHandle.name || 'Nothing playing';
+		return (
+			<MusicName>{musicName}</MusicName>
+		);
+	}
+
 	return (
 		<Root>
+			{renderCurrentMusicInfo()}
 			<ControlsContainer>
 				<DoublePrevButton />
 				<PrevButton />
