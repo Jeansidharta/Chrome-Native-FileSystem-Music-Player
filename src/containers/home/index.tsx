@@ -5,7 +5,6 @@ import MusicItem from './music-item';
 import styled from 'styled-components';
 import { usePlayingMusic } from '../../contexts/playing-music';
 import { useSort } from '../../contexts/sort';
-import { useFilter } from '../../contexts/filter';
 import { useSearchString } from '../../contexts/search-string';
 
 const MainRoot = styled.main`

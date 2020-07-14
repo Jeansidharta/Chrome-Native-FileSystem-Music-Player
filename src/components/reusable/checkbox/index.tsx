@@ -35,7 +35,7 @@ type CheckboxProps = React.PropsWithRef<{
 	initialValue?: boolean,
 	onChange?: (newValue: boolean) => void,
 	size?: number,
-}> & React.ComponentProps<'div'>;
+}> & Omit<React.ComponentProps<'button'>, 'onChange'>;
 
 type CheckboxRefAttributes = {
 	check: () => void,
@@ -53,7 +53,7 @@ const Checkbox: CheckboxComponent = ({
 }, ref) => {
 	const [checked, setChecked] = React.useState(initialValue);
 	const pathRef = React.useRef<SVGPathElement>(null);
-	const rootRef = React.useRef<HTMLDivElement>(null);
+	const rootRef = React.useRef<HTMLButtonElement>(null);
 
 	React.useLayoutEffect(() => {
 		const pathLength = pathRef.current!.getTotalLength();
@@ -87,7 +87,7 @@ const Checkbox: CheckboxComponent = ({
 		},
 	}), [checked]);
 
-	function handleClick (event: React.MouseEvent<HTMLDivElement>) {
+	function handleClick (event: React.MouseEvent<HTMLButtonElement>) {
 		setChecked(!checked);
 		if (props.onClick) props.onClick(event);
 	}
