@@ -50,7 +50,9 @@ const Footer = () => {
 	const {
 		pause,
 		resume,
-		musicStatus: { playing, currentlyPlaying }
+		musicStatus: { playing, currentlyPlaying },
+		playNextInQueue,
+		playPreviousInQueue,
 	} = usePlayingMusic();
 
 	const { updateVolume, volume } = useVolume();
@@ -66,7 +68,7 @@ const Footer = () => {
 	}, [volume]);
 
 	function renderCurrentMusicInfo () {
-		const musicName = currentlyPlaying?.fileHandle.name || 'Nothing playing';
+		const musicName = currentlyPlaying?.handler.name || 'Nothing playing';
 		return (
 			<MusicName>{musicName}</MusicName>
 		);
@@ -77,12 +79,12 @@ const Footer = () => {
 			{renderCurrentMusicInfo()}
 			<ControlsContainer>
 				<DoublePrevButton />
-				<PrevButton />
+				<PrevButton onClick={playPreviousInQueue} />
 				{ playing
 					? <PauseButton onClick={pause} />
 					: <PlayButton onClick={resume} />
 				}
-				<NextButton />
+				<NextButton onClick={playNextInQueue} />
 				<DoubleNextButton />
 			</ControlsContainer>
 			<VolumeSlider

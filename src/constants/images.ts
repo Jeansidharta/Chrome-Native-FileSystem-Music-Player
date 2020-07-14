@@ -1,8 +1,10 @@
 import styled, { FlattenSimpleInterpolation } from 'styled-components';
 
 const BaseImage = styled.img`
-	object-fit: center;
-	${(props: { css: FlattenSimpleInterpolation }) => props.css}
+	object-fit: contain;
+	width: 100%;
+	height: 100%;
+	${(props: { css?: FlattenSimpleInterpolation }) => props.css || ''};
 `;
 
 const Images = {
@@ -35,6 +37,21 @@ const Images = {
 		DoublePrevButton: styled(BaseImage).attrs(props => ({
 			src: '/icons/double-prev-button.svg',
 			alt: 'Double Previous Music Button Icon',
+			...props,
+		}))``,
+		Sort: styled(BaseImage).attrs(props => ({
+			src: '/icons/sort.svg',
+			alt: 'Sort Icon',
+			...props,
+		}))``,
+		Filter: styled(BaseImage).attrs(props => ({
+			src: '/icons/filter.svg',
+			alt: 'Filter Icon',
+			...props,
+		}))``,
+		ArrowUp: styled(BaseImage).attrs(props => ({
+			src: '/icons/arrow-up.svg',
+			alt: 'Arrow up Icon',
 			...props,
 		}))``,
 	}

@@ -1,4 +1,5 @@
 import React from 'react';
+import { MusicEntry } from '../models';
 
 type PlayingMusicContext = {
 	pause: () => void,
@@ -8,18 +9,13 @@ type PlayingMusicContext = {
 	addToQueue: (music: FileSystemFileHandle) => void,
 	playNextInQueue: () => void,
 	playPreviousInQueue: () => void,
-	currentlyPlaying: CurrentMusicInfo | null,
-}
-
-type CurrentMusicInfo = {
-	fileHandle: FileSystemFileHandle,
-	queueIndex: number,
+	currentlyPlaying: MusicEntry | null,
 }
 
 type MusicStatusState = {
 	playing: boolean,
 	queue: FileSystemFileHandle[],
-	currentlyPlaying: null | CurrentMusicInfo,
+	currentlyPlaying: null | MusicEntry,
 };
 
 const defaultMusicStatus: MusicStatusState = {
@@ -45,7 +41,7 @@ export function PlayingMusicProvider ({ ...props }) {
 		let currentlyPlaying;
 		if (queue.length === 0) currentlyPlaying = null;
 		else currentlyPlaying = {
-			fileHandle: queue[0],
+			handler: queue[0],
 			queueIndex: 0,
 		};
 		setMusicStatus({ ...musicStatus, queue, currentlyPlaying, playing: playAfter });
@@ -58,14 +54,14 @@ export function PlayingMusicProvider ({ ...props }) {
 
 	function playNextInQueue () {
 		const { queue, currentlyPlaying } = musicStatus;
-		let nextMusic: CurrentMusicInfo;
+		let nextMusic: MusicEntry;
 		if (!currentlyPlaying) {
 			if (queue.length === 0) return false;
-			nextMusic = { fileHandle: queue[0], queueIndex: 0 };
+			nextMusic = { handler: queue[0], queueIndex: 0 };
 		} else {
-			const nextIndex = currentlyPlaying.queueIndex + 1;
+			const nextIndex = currentlyPlaying.queueIndex! + 1;
 			if (nextIndex >= queue.length) return false;
-			nextMusic = { fileHandle: queue[nextIndex], queueIndex: nextIndex };
+			nextMusic = { handler: queue[nextIndex], queueIndex: nextIndex };
 		}
 		setMusicStatus({ ...musicStatus, currentlyPlaying: nextMusic });
 		return true;
@@ -73,11 +69,11 @@ export function PlayingMusicProvider ({ ...props }) {
 
 	function playPreviousInQueue () {
 		const { queue, currentlyPlaying } = musicStatus;
-		let prevMusic: CurrentMusicInfo;
+		let prevMusic: MusicEntry;
 		if (!currentlyPlaying) return false;
-		const prevIndex = currentlyPlaying.queueIndex - 1;
+		const prevIndex = currentlyPlaying.queueIndex! - 1;
 		if (prevIndex < 0) return false;
-		prevMusic = { fileHandle: queue[prevIndex], queueIndex: prevIndex };
+		prevMusic = { handler: queue[prevIndex], queueIndex: prevIndex };
 		setMusicStatus({ ...musicStatus, currentlyPlaying: prevMusic });
 		return true;
 	}

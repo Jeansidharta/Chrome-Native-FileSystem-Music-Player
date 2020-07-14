@@ -47,7 +47,7 @@ const MusicPlayer = () => {
 	async function updateURL () {
 		if (!currentlyPlaying) return;
 		const audioElement = audioRef.current as HTMLAudioElement;
-		const file = await openFile(currentlyPlaying.fileHandle);
+		const file = await openFile(currentlyPlaying.handler);
 		if (!file) return;
 
 		const newURL = URL.createObjectURL(file);
