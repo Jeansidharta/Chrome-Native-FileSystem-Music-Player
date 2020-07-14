@@ -1,9 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useFileSystem } from '../../contexts/file-system';
-import { useSortFilter } from '../../contexts/sort-filter';
 import Images from '../../constants/images';
 import IconButton from '../reusable/IconButton';
+import useFilterModal from '../modals/filter-modal';
+import useSortModal from '../modals/sort-modal';
+import { useSearchString } from '../../contexts/search-string';
 
 const Root = styled.header`
 	display: flex;
@@ -48,17 +50,15 @@ const DataOrganizationContainer = styled.div`
 	width: 100%;
 `;
 
-const SortIcon = styled(IconButton).attrs(() => ({
-	icon: <Images.Icons.Sort />,
-}))``;
+const SortIcon = styled(IconButton).attrs(() => ({ icon: <Images.Icons.Sort /> }))``;
 
-const FilterIcon = styled(IconButton).attrs(() => ({
-	icon: <Images.Icons.Filter />,
-}))``;
+const FilterIcon = styled(IconButton).attrs(() => ({ icon: <Images.Icons.Filter /> }))``;
 
 const Navbar = () => {
 	const { requestDirectoryAccess } = useFileSystem();
-	const { setSearchString } = useSortFilter();
+	const { setSearchString } = useSearchString();
+	const openFilterModal = useFilterModal();
+	const openSortModal = useSortModal();
 
 	function handleSearchChange (event: React.ChangeEvent<HTMLInputElement>) {
 		const value = event.target.value;
@@ -71,8 +71,8 @@ const Navbar = () => {
 				<Button onClick={requestDirectoryAccess}>Select folder</Button>
 			</ButtonsContainer>
 			<DataOrganizationContainer>
-				<SortIcon />
-				<FilterIcon />
+				<SortIcon onClick={openSortModal} />
+				<FilterIcon onClick={openFilterModal} />
 				<SearchInput
 					onChange={handleSearchChange}
 					placeholder='Search...'
