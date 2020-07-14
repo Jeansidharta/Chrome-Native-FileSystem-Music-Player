@@ -49,6 +49,11 @@ const Images = {
 			alt: 'Filter Icon',
 			...props,
 		}))``,
+		ArrowUp: styled(BaseImage).attrs(props => ({
+			src: '/icons/arrow-up.svg',
+			alt: 'Arrow up Icon',
+			...props,
+		}))``,
 	}
 }
 
