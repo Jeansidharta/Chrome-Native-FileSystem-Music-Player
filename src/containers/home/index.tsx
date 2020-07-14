@@ -10,16 +10,17 @@ const MainRoot = styled.main`
 	padding: 32px;
 `;
 
+const extractNameFromFileHandler = (file: FileSystemFileHandle) => file.name;
+
 function Home () {
 	const { fileSystem } = useFileSystem();
 	const { setQueue } = usePlayingMusic();
-	const { filterFunction, sortFunction, searchString } = useSortFilter();
+	const { filterFunction, sortFunction, searchFunction } = useSortFilter(extractNameFromFileHandler);
 
-	function searchStringFilter (a: FileSystemFileHandle) {
-		return a.name.trim().toLowerCase().includes(searchString.trim().toLowerCase());
-	}
-
-	const cleanMusicList = fileSystem?.music.filter(searchStringFilter);
+	const cleanMusicList = fileSystem?.music
+		.filter(searchFunction)
+		.filter(filterFunction)
+		.sort(sortFunction);
 
 	function handleMusicClick (musicIndex: number) {
 		setQueue(cleanMusicList!.slice(musicIndex), true);
