@@ -6,6 +6,7 @@ import Providers from '../contexts';
 import MusicPlayer from '../services/MusicPlayer';
 import Footer from '../components/layout/footer';
 import 'react-toastify/dist/ReactToastify.css';
+import ModalRenderer from '../services/modal-renderer';
 
 type MyAppProps = React.PropsWithoutRef<{
 	Component: any,
@@ -39,6 +40,7 @@ const MyApp: MyAppComponent = ({ Component, pageProps }) => {
 					<Footer />
 				</div>
 				<MusicPlayer />
+				<ModalRenderer />
 			</Providers>
 		</>
 	);

@@ -4,6 +4,7 @@ import { FileSystemProvider } from './file-system';
 import { PlayingMusicProvider } from './playing-music';
 import { VolumeProvider } from './volume';
 import { SortFilterProvider } from './sort-filter';
+import { ModalContextProvider } from './modal';
 
 type ProvidersProps = React.PropsWithChildren<{}>;
 
@@ -15,7 +16,9 @@ const Providers: ProvidersComponent = ({ children }) => {
 			<PlayingMusicProvider>
 				<VolumeProvider>
 					<SortFilterProvider>
-						{children}
+						<ModalContextProvider>
+							{children}
+						</ModalContextProvider>
 					</SortFilterProvider>
 				</VolumeProvider>
 			</PlayingMusicProvider>
