@@ -42,8 +42,8 @@ const PlayButton = styled(Images.Icons.PlayButton).attrs(() => ({ css: ActionBut
 const PauseButton = styled(Images.Icons.PauseButton).attrs(() => ({ css: ActionButtonStyles}))``;
 const NextButton = styled(Images.Icons.NextButton).attrs(() => ({ css: ActionButtonStyles}))``;
 const PrevButton = styled(Images.Icons.PrevButton).attrs(() => ({ css: ActionButtonStyles}))``;
-const DoublePrevButton = styled(Images.Icons.DoublePrevButton).attrs(() => ({ css: ActionButtonStyles}))``;
-const DoubleNextButton = styled(Images.Icons.DoubleNextButton).attrs(() => ({ css: ActionButtonStyles}))``;
+// const DoublePrevButton = styled(Images.Icons.DoublePrevButton).attrs(() => ({ css: ActionButtonStyles}))``;
+// const DoubleNextButton = styled(Images.Icons.DoubleNextButton).attrs(() => ({ css: ActionButtonStyles}))``;
 
 const Footer = () => {
 	const volumeSliderRef = React.useRef<HTMLInputElement>(null);
@@ -78,14 +78,14 @@ const Footer = () => {
 		<Root>
 			{renderCurrentMusicInfo()}
 			<ControlsContainer>
-				<DoublePrevButton />
+				{/* <DoublePrevButton /> */}
 				<PrevButton onClick={playPreviousInQueue} />
 				{ playing
 					? <PauseButton onClick={pause} />
 					: <PlayButton onClick={resume} />
 				}
 				<NextButton onClick={playNextInQueue} />
-				<DoubleNextButton />
+				{/* <DoubleNextButton /> */}
 			</ControlsContainer>
 			<VolumeSlider
 				min="0"
