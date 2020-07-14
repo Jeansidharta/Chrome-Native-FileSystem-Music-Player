@@ -13,7 +13,7 @@ function useSortModal () {
 
 	return () => openModal(
 		<Root>
-			{['batata'].map(option => <FilterItem
+			{possibleFilterOptions.map(option => <FilterItem
 				name={option}
 				key={option}
 			/>)}

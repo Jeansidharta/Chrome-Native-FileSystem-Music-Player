@@ -1,27 +1,24 @@
 import React from 'react';
 
-type FilterFunction<DataType> = (a: DataType) => boolean;
-type KeyExtractor<DataType, KeyType> = (a: DataType) => KeyType;
-type MakeFilterFunction = <DataType, KeyType>(keyExtractor: KeyExtractor<DataType, KeyType>) => FilterFunction<DataType>;
-
 type FilterContext = {
-	makeFilterFunction: MakeFilterFunction,
-	setFilterFunction: <DataType>(filter: FilterFunction<DataType>) => void,
+	possibleFilterOptions: string[],
+	setPossibleFilterOptions: (options: string[]) => void,
+	selectedFilterOption: string | null,
+	setSelectedFilterOption: (option: string | null) => void,
 }
 
 const FilterContext = React.createContext<FilterContext | null>(null);
 
 export function FilterProvider ({ ...props }) {
-	const [filterFunction, setFilterFunction] = React.useState<FilterFunction<any>>(() => () => true);
-
-	function makeFilterFunction<KeyType, ValueType>(keyExtractor: KeyExtractor<KeyType, ValueType>) {
-		return (a: KeyType) => filterFunction(keyExtractor(a));
-	}
+	const [possibleFilterOptions, setPossibleFilterOptions] = React.useState<string[]>([]);
+	const [selectedFilterOption, setSelectedFilterOption] = React.useState<string | null>(null);
 
 	return (
 		<FilterContext.Provider {...props} value={{
-			makeFilterFunction,
-			setFilterFunction,
+			possibleFilterOptions,
+			setPossibleFilterOptions,
+			selectedFilterOption,
+			setSelectedFilterOption,
 		}} />
 	);
 }
