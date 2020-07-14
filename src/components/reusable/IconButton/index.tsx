@@ -29,20 +29,26 @@ const Root = styled.button<React.PropsWithChildren<{ size: number }>>`
 type IconButtonProps = React.PropsWithoutRef<{
 	icon: JSX.Element,
 	size?: 'small' | 'medium' | 'large' | number,
-}>;
+}> & React.ComponentProps<'div'>;
 
-function IconButton (props: IconButtonProps) {
+type IconButtonComponent = React.FunctionComponent<IconButtonProps>;
+
+const IconButton: IconButtonComponent = ({
+	icon,
+	children,
+	size = 'medium',
+	...props
+}) => {
 	let sizeNumber: number;
-	if (props.size === null || props.size === undefined) sizeNumber = 24;
-	else if (typeof props.size === 'number') sizeNumber = props.size;
-	else if (props.size === 'small') sizeNumber = 16;
-	else if (props.size === 'medium') sizeNumber = 24;
-	else if (props.size === 'large') sizeNumber = 32;
-	else throw new Error(`Invalid size '${props.size}'`);
+	if (typeof size === 'number') sizeNumber = size;
+	else if (size === 'small') sizeNumber = 16;
+	else if (size === 'medium') sizeNumber = 24;
+	else if (size === 'large') sizeNumber = 32;
+	else throw new Error(`Invalid size '${size}'`);
 
 	return (
-		<Root size={sizeNumber}>
-			{props.icon}
+		<Root size={sizeNumber} {...props}>
+			{icon}
 		</Root>
 	);
 }
