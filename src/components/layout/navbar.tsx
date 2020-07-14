@@ -6,6 +6,8 @@ import IconButton from '../reusable/IconButton';
 import useFilterModal from '../modals/filter-modal';
 import useSortModal from '../modals/sort-modal';
 import { useSearchString } from '../../contexts/search-string';
+import { useSort } from '../../contexts/sort';
+import { useFilter } from '../../contexts/filter';
 
 const Root = styled.header`
 	display: flex;
@@ -57,6 +59,8 @@ const FilterIcon = styled(IconButton).attrs(() => ({ icon: <Images.Icons.Filter 
 const Navbar = () => {
 	const { requestDirectoryAccess } = useFileSystem();
 	const { setSearchString } = useSearchString();
+	const { possibleSortOptions } = useSort();
+	const { possibleFilterOptions } = useFilter();
 	const openFilterModal = useFilterModal();
 	const openSortModal = useSortModal();
 
@@ -65,17 +69,32 @@ const Navbar = () => {
 		setSearchString(value);
 	}
 
+	const canSort = possibleSortOptions.length > 0;
+	const canFilter = possibleFilterOptions.length > 0;
+
+	const sortActionDescription = `Sort elements${canSort? '' : ' - Cannot sort this page'}`;
+	const filterActionDescription = `Filter elements${canFilter? '' : ' - Cannot filter this page'}`;
+
 	return (
 		<Root>
 			<ButtonsContainer>
 				<Button onClick={requestDirectoryAccess}>Select folder</Button>
 			</ButtonsContainer>
 			<DataOrganizationContainer>
-				<SortIcon onClick={openSortModal} />
-				<FilterIcon onClick={openFilterModal} />
+				<SortIcon
+					onClick={openSortModal}
+					disabled={!canSort}
+					actionDescription={sortActionDescription}
+				/>
+				<FilterIcon
+					onClick={openFilterModal}
+					disabled={!canFilter}
+					actionDescription={filterActionDescription}
+				/>
 				<SearchInput
 					onChange={handleSearchChange}
 					placeholder='Search...'
+					title='Search for an element'
 				/>
 			</DataOrganizationContainer>
 		</Root>

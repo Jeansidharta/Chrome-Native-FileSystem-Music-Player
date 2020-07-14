@@ -1,35 +1,43 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Root = styled.button<React.PropsWithChildren<{ size: number }>>`
+const Root = styled.button<React.PropsWithoutRef<{ size: number, disabled: boolean  }>>`
 	margin: 0 8px;
 	border-radius: 4px;
 	padding: 3px;
-	cursor: pointer;
 	border: none;
 	box-shadow: -2px 2px 4px rgba(0, 0, 0, 0.2);
 	background-color: transparent;
 	transition: 200ms;
 	outline: none;
-	:hover, :focus {
-		transform: scale(1.1);
-		box-shadow: -3px 3px 5px rgba(0, 0, 0, 0.2);
-	}
-	:active {
-		transform: scale(0.9);
-		box-shadow: -1px 1px 2px rgba(0, 0, 0, 0.2);
-	}
 
-	${(props: { size: number }) => `
-		width: ${props.size}px;
-		height: ${props.size}px;
+	${({ size }) => `
+		width: ${size}px;
+		height: ${size}px;
+	`}
+
+	${({ disabled }) => disabled ? `
+		opacity: 0.5;
+		cursor: not-allowed;
+	` : `
+		cursor: pointer;
+		:hover, :focus {
+			transform: scale(1.1);
+			box-shadow: -3px 3px 5px rgba(0, 0, 0, 0.2);
+		}
+		:active {
+			transform: scale(0.9);
+			box-shadow: -1px 1px 2px rgba(0, 0, 0, 0.2);
+		}
 	`}
 `;
 
 type IconButtonProps = React.PropsWithoutRef<{
 	icon: JSX.Element,
 	size?: 'small' | 'medium' | 'large' | number,
-}> & React.ComponentProps<'div'>;
+	disabled: boolean,
+	actionDescription: string,
+}> & React.ComponentPropsWithoutRef<'button'>;
 
 type IconButtonComponent = React.FunctionComponent<IconButtonProps>;
 
@@ -37,6 +45,8 @@ const IconButton: IconButtonComponent = ({
 	icon,
 	children,
 	size = 'medium',
+	disabled,
+	actionDescription,
 	...props
 }) => {
 	let sizeNumber: number;
@@ -47,7 +57,7 @@ const IconButton: IconButtonComponent = ({
 	else throw new Error(`Invalid size '${size}'`);
 
 	return (
-		<Root size={sizeNumber} {...props}>
+		<Root title={actionDescription} size={sizeNumber} disabled={disabled} {...props}>
 			{icon}
 		</Root>
 	);
