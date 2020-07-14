@@ -1,8 +1,10 @@
 import styled, { FlattenSimpleInterpolation } from 'styled-components';
 
 const BaseImage = styled.img`
-	object-fit: center;
-	${(props: { css: FlattenSimpleInterpolation }) => props.css}
+	object-fit: contain;
+	width: 100%;
+	height: 100%;
+	${(props: { css?: FlattenSimpleInterpolation }) => props.css || ''};
 `;
 
 const Images = {
