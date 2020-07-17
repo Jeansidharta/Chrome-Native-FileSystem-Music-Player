@@ -2,19 +2,25 @@ import React from 'react';
 import styled from 'styled-components';
 import { usePlayingMusic } from '../../contexts/playing-music';
 import { MusicEntry } from '../../models';
+import DisplayMusicDuration from '../../components/reusable/display-music-duration';
 
 const Root = styled.div`
 	border: 1px solid rgba(0, 0, 0, 0.3);
 	padding: 8px 16px;
 	margin: 2px 0;
 	display: flex;
-	justify-content: space-between;
-	align-items: center;
+	flex-direction: column;
+	justify-content: center;
 	cursor: pointer;
 	${(props: { isSame: boolean }) => props.isSame ? `
 		background-color: palegreen;
 	` : `
 	`}
+`;
+
+const MusicDuration = styled.div`
+	opacity: 0.5;
+	font-size: 14px;
 `;
 
 const MusicName = styled.p`
@@ -36,6 +42,9 @@ const MusicItem: MusicItemComponent = ({ music, onClick }) => {
 	return (
 		<Root onClick={onClick} isSame={isSame}>
 			<MusicName>{music.file.name}</MusicName>
+			<MusicDuration>
+				<DisplayMusicDuration music={music} />
+			</MusicDuration>
 		</Root>
 	);
 }

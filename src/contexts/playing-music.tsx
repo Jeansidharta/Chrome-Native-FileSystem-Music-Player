@@ -11,6 +11,7 @@ type PlayingMusicContext = {
 	playPrevious: () => void,
 	currentlyPlaying: MusicEntry | null,
 	requestLoadDirectory: () => Promise<void>,
+	updateMusicDuration: (music: MusicEntry, duration: number) => void,
 	allMusic: MusicEntry[],
 }
 
@@ -91,6 +92,13 @@ export function PlayingMusicProvider ({ ...props }) {
 		return true;
 	}
 
+	function updateMusicDuration (music: MusicEntry, duration: number) {
+		const musicIndex = findMusicIndex(music);
+		const newAllMusic = [...allMusic];
+		newAllMusic[musicIndex] = { ...music, duration };
+		setAllMusic(newAllMusic);
+	}
+
 	return (
 		<playingMusicContext.Provider {...props} value={{
 			pause,
@@ -101,6 +109,7 @@ export function PlayingMusicProvider ({ ...props }) {
 			playPrevious,
 			requestLoadDirectory,
 			allMusic,
+			updateMusicDuration,
 			currentlyPlaying: musicStatus.currentlyPlaying,
 		}} />
 	);
