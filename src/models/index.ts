@@ -1,4 +1,4 @@
 export type MusicEntry = {
-	file: file,
+	file: File,
 	queueIndex: number | null,
 }

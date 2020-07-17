@@ -42,7 +42,23 @@ const SearchInput = styled.input.attrs(props => ({ type: 'text', ...props }))`
 `;
 
 const Button = styled.button`
-	border-bottom: 1px solid black;
+	cursor: pointer;
+	background-color: transparent;
+	border: none;
+	box-shadow: -2px 2px 2px rgba(0, 0, 0, 0.2);
+	border-radius: 8px;
+	padding: 4px 8px;
+	font-size: 12px;
+	transition: 200ms;
+	outline: none;
+	:hover, :focus {
+		box-shadow: -4px 4px 4px rgba(0, 0, 0, 0.1);
+		transform: scale(1.1);
+	}
+	:active {
+		box-shadow: -1px 1px 1px rgba(0, 0, 0, 0.4);
+		transform: scale(0.9);
+	}
 `;
 
 const DataOrganizationContainer = styled.div`
@@ -78,7 +94,7 @@ const Navbar = () => {
 	return (
 		<Root>
 			<ButtonsContainer>
-				<Button onClick={requestDirectoryAccess}>Select folder</Button>
+				<Button onClick={requestDirectoryAccess}>Add files<br/>from folder</Button>
 			</ButtonsContainer>
 			<DataOrganizationContainer>
 				<SortIcon
