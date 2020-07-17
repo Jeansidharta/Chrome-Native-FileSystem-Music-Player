@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useFileSystem } from '../../contexts/file-system';
 import Images from '../../constants/images';
 import IconButton from '../reusable/IconButton';
 import useFilterModal from '../modals/filter-modal';
@@ -8,6 +7,7 @@ import useSortModal from '../modals/sort-modal';
 import { useSearchString } from '../../contexts/search-string';
 import { useSort } from '../../contexts/sort';
 import { useFilter } from '../../contexts/filter';
+import { usePlayingMusic } from '../../contexts/playing-music';
 
 const Root = styled.header`
 	display: flex;
@@ -73,10 +73,10 @@ const SortIcon = styled(IconButton).attrs(() => ({ icon: <Images.Icons.Sort /> }
 const FilterIcon = styled(IconButton).attrs(() => ({ icon: <Images.Icons.Filter /> }))``;
 
 const Navbar = () => {
-	const { requestDirectoryAccess } = useFileSystem();
 	const { setSearchString } = useSearchString();
 	const { possibleSortOptions } = useSort();
 	const { possibleFilterOptions } = useFilter();
+	const { requestLoadDirectory } = usePlayingMusic();
 	const openFilterModal = useFilterModal();
 	const openSortModal = useSortModal();
 
@@ -94,7 +94,7 @@ const Navbar = () => {
 	return (
 		<Root>
 			<ButtonsContainer>
-				<Button onClick={requestDirectoryAccess}>Add files<br/>from folder</Button>
+				<Button onClick={requestLoadDirectory}>Add files<br/>from folder</Button>
 			</ButtonsContainer>
 			<DataOrganizationContainer>
 				<SortIcon

@@ -3,7 +3,7 @@ import { usePlayingMusic } from '../contexts/playing-music';
 import { useVolume } from '../contexts/volume';
 
 const MusicPlayer = () => {
-	const { musicStatus: { currentlyPlaying, playing }, playNextInQueue } = usePlayingMusic();
+	const { musicStatus: { currentlyPlaying, playing }, playNext } = usePlayingMusic();
 	const { volume } = useVolume();
 	const [musicURL, setMusicURL] = React.useState<string | null>(null);
 	const audioRef = React.useRef<HTMLAudioElement>(null);
@@ -22,12 +22,12 @@ const MusicPlayer = () => {
 
 	React.useEffect(() => {
 		function nextSong () {
-			playNextInQueue();
+			playNext();
 		}
 
 		audioRef.current?.addEventListener('ended', nextSong);
 		return () => audioRef.current?.removeEventListener('ended', nextSong);
-	}, [playNextInQueue]);
+	}, [playNext]);
 
 	React.useEffect(() => { updateURL() }, [currentlyPlaying]);
 

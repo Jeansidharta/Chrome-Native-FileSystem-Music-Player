@@ -51,8 +51,8 @@ const Footer = () => {
 		pause,
 		resume,
 		musicStatus: { playing, currentlyPlaying },
-		playNextInQueue,
-		playPreviousInQueue,
+		playNext,
+		playPrevious,
 	} = usePlayingMusic();
 
 	const { updateVolume, volume } = useVolume();
@@ -79,12 +79,12 @@ const Footer = () => {
 			{renderCurrentMusicInfo()}
 			<ControlsContainer>
 				{/* <DoublePrevButton /> */}
-				<PrevButton onClick={playPreviousInQueue} />
+				<PrevButton onClick={playPrevious} />
 				{ playing
 					? <PauseButton onClick={pause} />
 					: <PlayButton onClick={resume} />
 				}
-				<NextButton onClick={playNextInQueue} />
+				<NextButton onClick={playNext} />
 				{/* <DoubleNextButton /> */}
 			</ControlsContainer>
 			<VolumeSlider

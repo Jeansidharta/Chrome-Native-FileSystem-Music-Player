@@ -1,22 +1,21 @@
 import React from 'react';
-import { useFileSystem } from '../../contexts/file-system';
 import MusicItem from './music-item';
 import styled from 'styled-components';
 import { usePlayingMusic } from '../../contexts/playing-music';
 import { useSort } from '../../contexts/sort';
 import { useSearchString } from '../../contexts/search-string';
+import { MusicEntry } from '../../models';
 
 const MainRoot = styled.main`
 	padding: 32px;
 `;
 
-function extractFileName (file: File) {
-	return file.name;
+function extractMusicName (music: MusicEntry) {
+	return music.file.name;
 }
 
 function Home () {
-	const { fileSystem } = useFileSystem();
-	const { setQueue } = usePlayingMusic();
+	const { play, allMusic } = usePlayingMusic();
 	const { makeSortFunction, setPossibleSortOptions, selectedSortOption } = useSort();
 	const { makeSearchFunction } = useSearchString();
 
@@ -28,28 +27,28 @@ function Home () {
 		if (!selectedSortOption) {
 			return () => '';
 		} else if(selectedSortOption.name === 'name') {
-			return (file: File) => file.name;
+			return (music: MusicEntry) => music.file.name;
 		} else throw new Error(`invalid sort option '${selectedSortOption.name}'`);
 	}
 
 	const sortKeyExtractor = makeSortKeyExtractor();
 
-	const cleanMusicList = fileSystem?.music
-		.filter(makeSearchFunction(extractFileName))
+	const cleanMusicList = allMusic
+		.filter(makeSearchFunction(extractMusicName))
 		.sort(makeSortFunction(sortKeyExtractor));
 
-	function handleMusicClick (musicIndex: number) {
-		setQueue(cleanMusicList!.slice(musicIndex), true);
+	function handleMusicClick (music: MusicEntry) {
+		play(music);
 	}
 
 	function renderMusicItems () {
 		if (!cleanMusicList) return <>Please, open a music folder.</>;
 
-		return cleanMusicList.map((musicFileHandler, index) =>
+		return cleanMusicList.map((music, index) =>
 			<MusicItem
 				key={index}
-				musicFile={musicFileHandler}
-				onClick={() => handleMusicClick(index)}
+				music={music}
+				onClick={() => handleMusicClick(music)}
 			/>
 		);
 	}
