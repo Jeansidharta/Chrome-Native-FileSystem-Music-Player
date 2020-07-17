@@ -68,7 +68,7 @@ const Footer = () => {
 	}, [volume]);
 
 	function renderCurrentMusicInfo () {
-		const musicName = currentlyPlaying?.handler.name || 'Nothing playing';
+		const musicName = currentlyPlaying?.file.name || 'Nothing playing';
 		return (
 			<MusicName>{musicName}</MusicName>
 		);

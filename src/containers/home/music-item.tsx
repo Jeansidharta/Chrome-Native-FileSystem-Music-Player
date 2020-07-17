@@ -21,20 +21,20 @@ const MusicName = styled.p`
 `;
 
 type MusicItemProps = {
-	musicFileHandler: FileSystemFileHandle,
+	musicFile: File,
 	onClick?: (event: React.MouseEvent<HTMLDivElement>) => void,
 }
 
 type MusicItemComponent = React.FunctionComponent<MusicItemProps>;
 
-const MusicItem: MusicItemComponent = ({ musicFileHandler, onClick }) => {
+const MusicItem: MusicItemComponent = ({ musicFile, onClick }) => {
 	const { currentlyPlaying } = usePlayingMusic();
 
-	const isSame = currentlyPlaying?.handler.name === musicFileHandler.name;
+	const isSame = currentlyPlaying?.file.name === musicFile.name;
 
 	return (
 		<Root onClick={onClick} isSame={isSame}>
-			<MusicName>{musicFileHandler.name}</MusicName>
+			<MusicName>{musicFile.name}</MusicName>
 		</Root>
 	);
 }

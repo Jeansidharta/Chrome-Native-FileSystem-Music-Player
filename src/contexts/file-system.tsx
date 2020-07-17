@@ -10,7 +10,7 @@ const fileSystemContext = React.createContext<FileSystemContext>(null as any);
 
 type FileSystemState = {
 	directory: FileSystemDirectoryHandle,
-	music: FileSystemFileHandle[],
+	music: File[],
 }
 
 export function FileSystemProvider ({ ...props }) {
@@ -20,12 +20,13 @@ export function FileSystemProvider ({ ...props }) {
 		const dir = await openDirectory().catch(e => console.error(e));
 		if (!dir) return;
 
-		const files = [];
+		const promises: Promise<File>[] = [];
 		for await(const file of dir.getEntries()) {
-			files.push(file);
+			promises.push(file.getFile());
 		}
+		const music = await Promise.all(promises);
 
-		setFileSystem({ directory: dir, music: files });
+		setFileSystem({ directory: dir, music });
 	}
 
 	return (

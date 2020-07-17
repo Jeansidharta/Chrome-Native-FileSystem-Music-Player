@@ -5,8 +5,8 @@ type PlayingMusicContext = {
 	pause: () => void,
 	resume: () => void,
 	musicStatus: MusicStatusState,
-	setQueue: (queue: FileSystemFileHandle[], playAfter: boolean) => void,
-	addToQueue: (music: FileSystemFileHandle) => void,
+	setQueue: (queue: File[], playAfter: boolean) => void,
+	addToQueue: (music: File) => void,
 	playNextInQueue: () => void,
 	playPreviousInQueue: () => void,
 	currentlyPlaying: MusicEntry | null,
@@ -14,7 +14,7 @@ type PlayingMusicContext = {
 
 type MusicStatusState = {
 	playing: boolean,
-	queue: FileSystemFileHandle[],
+	queue: File[],
 	currentlyPlaying: null | MusicEntry,
 };
 
@@ -37,17 +37,17 @@ export function PlayingMusicProvider ({ ...props }) {
 		setMusicStatus({ ...musicStatus, playing: true });
 	}
 
-	function setQueue (queue: FileSystemFileHandle[], playAfter: boolean = false) {
+	function setQueue (queue: File[], playAfter: boolean = false) {
 		let currentlyPlaying;
 		if (queue.length === 0) currentlyPlaying = null;
 		else currentlyPlaying = {
-			handler: queue[0],
+			file: queue[0],
 			queueIndex: 0,
 		};
 		setMusicStatus({ ...musicStatus, queue, currentlyPlaying, playing: playAfter });
 	}
 
-	function addToQueue (music: FileSystemFileHandle) {
+	function addToQueue (music: File) {
 		const newQueue = [...musicStatus.queue, music];
 		setMusicStatus({ ...musicStatus, queue: newQueue });
 	}
@@ -57,11 +57,11 @@ export function PlayingMusicProvider ({ ...props }) {
 		let nextMusic: MusicEntry;
 		if (!currentlyPlaying) {
 			if (queue.length === 0) return false;
-			nextMusic = { handler: queue[0], queueIndex: 0 };
+			nextMusic = { file: queue[0], queueIndex: 0 };
 		} else {
 			const nextIndex = currentlyPlaying.queueIndex! + 1;
 			if (nextIndex >= queue.length) return false;
-			nextMusic = { handler: queue[nextIndex], queueIndex: nextIndex };
+			nextMusic = { file: queue[nextIndex], queueIndex: nextIndex };
 		}
 		setMusicStatus({ ...musicStatus, currentlyPlaying: nextMusic });
 		return true;
@@ -73,7 +73,7 @@ export function PlayingMusicProvider ({ ...props }) {
 		if (!currentlyPlaying) return false;
 		const prevIndex = currentlyPlaying.queueIndex! - 1;
 		if (prevIndex < 0) return false;
-		prevMusic = { handler: queue[prevIndex], queueIndex: prevIndex };
+		prevMusic = { file: queue[prevIndex], queueIndex: prevIndex };
 		setMusicStatus({ ...musicStatus, currentlyPlaying: prevMusic });
 		return true;
 	}

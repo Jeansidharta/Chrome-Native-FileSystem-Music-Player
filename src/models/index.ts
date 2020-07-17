@@ -1,4 +1,4 @@
 export type MusicEntry = {
-	handler: FileSystemFileHandle,
+	file: file,
 	queueIndex: number | null,
 }

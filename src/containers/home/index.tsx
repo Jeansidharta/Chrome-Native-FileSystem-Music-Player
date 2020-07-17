@@ -10,7 +10,7 @@ const MainRoot = styled.main`
 	padding: 32px;
 `;
 
-function extractFileName (file: FileSystemFileHandle) {
+function extractFileName (file: File) {
 	return file.name;
 }
 
@@ -28,7 +28,7 @@ function Home () {
 		if (!selectedSortOption) {
 			return () => '';
 		} else if(selectedSortOption.name === 'name') {
-			return (file: FileSystemFileHandle) => file.name;
+			return (file: File) => file.name;
 		} else throw new Error(`invalid sort option '${selectedSortOption.name}'`);
 	}
 
@@ -48,7 +48,7 @@ function Home () {
 		return cleanMusicList.map((musicFileHandler, index) =>
 			<MusicItem
 				key={index}
-				musicFileHandler={musicFileHandler}
+				musicFile={musicFileHandler}
 				onClick={() => handleMusicClick(index)}
 			/>
 		);
