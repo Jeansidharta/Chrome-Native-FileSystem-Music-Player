@@ -4,17 +4,18 @@ import styled from 'styled-components';
 import { usePlayingMusic } from '../../contexts/playing-music';
 import { useSort } from '../../contexts/sort';
 import { useSearchString } from '../../contexts/search-string';
+import { MusicEntry } from '../../models';
 
 const MainRoot = styled.main`
 	padding: 32px;
 `;
 
-function extractFileName (file: File) {
-	return file.name;
+function extractMusicName (music: MusicEntry) {
+	return music.file.name;
 }
 
 function Home () {
-	const { setQueue, allMusic } = usePlayingMusic();
+	const { play, allMusic } = usePlayingMusic();
 	const { makeSortFunction, setPossibleSortOptions, selectedSortOption } = useSort();
 	const { makeSearchFunction } = useSearchString();
 
@@ -26,28 +27,28 @@ function Home () {
 		if (!selectedSortOption) {
 			return () => '';
 		} else if(selectedSortOption.name === 'name') {
-			return (file: File) => file.name;
+			return (music: MusicEntry) => music.file.name;
 		} else throw new Error(`invalid sort option '${selectedSortOption.name}'`);
 	}
 
 	const sortKeyExtractor = makeSortKeyExtractor();
 
 	const cleanMusicList = allMusic
-		.filter(makeSearchFunction(extractFileName))
+		.filter(makeSearchFunction(extractMusicName))
 		.sort(makeSortFunction(sortKeyExtractor));
 
-	function handleMusicClick (musicIndex: number) {
-		setQueue(cleanMusicList!.slice(musicIndex), true);
+	function handleMusicClick (music: MusicEntry) {
+		play(music);
 	}
 
 	function renderMusicItems () {
 		if (!cleanMusicList) return <>Please, open a music folder.</>;
 
-		return cleanMusicList.map((musicFile, index) =>
+		return cleanMusicList.map((music, index) =>
 			<MusicItem
 				key={index}
-				musicFile={musicFile}
-				onClick={() => handleMusicClick(index)}
+				music={music}
+				onClick={() => handleMusicClick(music)}
 			/>
 		);
 	}

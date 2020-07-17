@@ -6,31 +6,28 @@ type PlayingMusicContext = {
 	pause: () => void,
 	resume: () => void,
 	musicStatus: MusicStatusState,
-	setQueue: (queue: File[], playAfter: boolean) => void,
-	addToQueue: (music: File) => void,
-	playNextInQueue: () => void,
-	playPreviousInQueue: () => void,
+	play: (music: MusicEntry) => void,
+	playNext: () => void,
+	playPrevious: () => void,
 	currentlyPlaying: MusicEntry | null,
 	requestLoadDirectory: () => Promise<void>,
-	allMusic: File[],
+	allMusic: MusicEntry[],
 }
 
 type MusicStatusState = {
 	playing: boolean,
-	queue: File[],
 	currentlyPlaying: null | MusicEntry,
 };
 
 const defaultMusicStatus: MusicStatusState = {
 	playing: false,
-	queue: [],
 	currentlyPlaying: null,
 }
 
 const playingMusicContext = React.createContext<PlayingMusicContext>(null as any);
 
 export function PlayingMusicProvider ({ ...props }) {
-	const [allMusic, setAllMusic] = React.useState<File[]>([]);
+	const [allMusic, setAllMusic] = React.useState<MusicEntry[]>([]);
 	const [musicStatus, setMusicStatus] = React.useState<MusicStatusState>(defaultMusicStatus);
 
 	// DO NOT REMOVE THIS
@@ -45,10 +42,12 @@ export function PlayingMusicProvider ({ ...props }) {
 		for await(const file of dir.getEntries()) {
 			promises.push(file.getFile());
 		}
-		const music = await Promise.all(promises);
+		const files = await Promise.all(promises);
+
+		const musicEntries = files.map(file => ({ file, duration: null }));
 
 		setDir(dir);
-		setAllMusic(music);
+		setAllMusic(musicEntries.filter(e => e) as MusicEntry[]);
 	}
 
 	function pause () {
@@ -59,43 +58,35 @@ export function PlayingMusicProvider ({ ...props }) {
 		setMusicStatus({ ...musicStatus, playing: true });
 	}
 
-	function setQueue (queue: File[], playAfter: boolean = false) {
-		let currentlyPlaying;
-		if (queue.length === 0) currentlyPlaying = null;
-		else currentlyPlaying = {
-			file: queue[0],
-			queueIndex: 0,
-		};
-		setMusicStatus({ ...musicStatus, queue, currentlyPlaying, playing: playAfter });
+	function play (currentlyPlaying: MusicEntry) {
+		setMusicStatus({ ...musicStatus, currentlyPlaying, playing: true });
 	}
 
-	function addToQueue (music: File) {
-		const newQueue = [...musicStatus.queue, music];
-		setMusicStatus({ ...musicStatus, queue: newQueue });
+	function findMusicIndex (music: MusicEntry) {
+		return allMusic.findIndex(f => f.file === music.file);
 	}
 
-	function playNextInQueue () {
-		const { queue, currentlyPlaying } = musicStatus;
+	function playNext () {
+		const { currentlyPlaying } = musicStatus;
 		let nextMusic: MusicEntry;
 		if (!currentlyPlaying) {
-			if (queue.length === 0) return false;
-			nextMusic = { file: queue[0], queueIndex: 0 };
+			nextMusic = allMusic[0];
 		} else {
-			const nextIndex = currentlyPlaying.queueIndex! + 1;
-			if (nextIndex >= queue.length) return false;
-			nextMusic = { file: queue[nextIndex], queueIndex: nextIndex };
+			const nextIndex = findMusicIndex(currentlyPlaying) + 1;
+			if (nextIndex >= allMusic.length) return false;
+			nextMusic = allMusic[nextIndex];
 		}
 		setMusicStatus({ ...musicStatus, currentlyPlaying: nextMusic });
 		return true;
 	}
 
-	function playPreviousInQueue () {
-		const { queue, currentlyPlaying } = musicStatus;
+	function playPrevious () {
+		const { currentlyPlaying } = musicStatus;
 		let prevMusic: MusicEntry;
 		if (!currentlyPlaying) return false;
-		const prevIndex = currentlyPlaying.queueIndex! - 1;
+		const prevIndex = findMusicIndex(currentlyPlaying) - 1;
 		if (prevIndex < 0) return false;
-		prevMusic = { file: queue[prevIndex], queueIndex: prevIndex };
+		prevMusic = allMusic[prevIndex];
 		setMusicStatus({ ...musicStatus, currentlyPlaying: prevMusic });
 		return true;
 	}
@@ -105,10 +96,9 @@ export function PlayingMusicProvider ({ ...props }) {
 			pause,
 			resume,
 			musicStatus,
-			setQueue,
-			addToQueue,
-			playNextInQueue,
-			playPreviousInQueue,
+			play,
+			playNext,
+			playPrevious,
 			requestLoadDirectory,
 			allMusic,
 			currentlyPlaying: musicStatus.currentlyPlaying,

@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { usePlayingMusic } from '../../contexts/playing-music';
+import { MusicEntry } from '../../models';
 
 const Root = styled.div`
 	border: 1px solid rgba(0, 0, 0, 0.3);
@@ -21,20 +22,20 @@ const MusicName = styled.p`
 `;
 
 type MusicItemProps = {
-	musicFile: File,
+	music: MusicEntry,
 	onClick?: (event: React.MouseEvent<HTMLDivElement>) => void,
 }
 
 type MusicItemComponent = React.FunctionComponent<MusicItemProps>;
 
-const MusicItem: MusicItemComponent = ({ musicFile, onClick }) => {
+const MusicItem: MusicItemComponent = ({ music, onClick }) => {
 	const { currentlyPlaying } = usePlayingMusic();
 
-	const isSame = currentlyPlaying?.file.name === musicFile.name;
+	const isSame = currentlyPlaying?.file.name === music.file.name;
 
 	return (
 		<Root onClick={onClick} isSame={isSame}>
-			<MusicName>{musicFile.name}</MusicName>
+			<MusicName>{music.file.name}</MusicName>
 		</Root>
 	);
 }
