@@ -1,5 +1,6 @@
 import React from 'react';
 import { MusicEntry } from '../models';
+import { openDirectory } from '../libs/file-helpers';
 
 type PlayingMusicContext = {
 	pause: () => void,
@@ -10,6 +11,8 @@ type PlayingMusicContext = {
 	playNextInQueue: () => void,
 	playPreviousInQueue: () => void,
 	currentlyPlaying: MusicEntry | null,
+	requestLoadDirectory: () => Promise<void>,
+	allMusic: File[],
 }
 
 type MusicStatusState = {
@@ -27,7 +30,26 @@ const defaultMusicStatus: MusicStatusState = {
 const playingMusicContext = React.createContext<PlayingMusicContext>(null as any);
 
 export function PlayingMusicProvider ({ ...props }) {
+	const [allMusic, setAllMusic] = React.useState<File[]>([]);
 	const [musicStatus, setMusicStatus] = React.useState<MusicStatusState>(defaultMusicStatus);
+
+	// DO NOT REMOVE THIS
+	// This is related to a bug in chrome. See this repo: https://github.com/Jeansidharta/chrome-bug-report---native-file-system-api
+	const [_, setDir] = React.useState<FileSystemDirectoryHandle | null>(null);
+
+	async function requestLoadDirectory () {
+		const dir = await openDirectory().catch(e => console.error(e));
+		if (!dir) return;
+
+		const promises: Promise<File>[] = [];
+		for await(const file of dir.getEntries()) {
+			promises.push(file.getFile());
+		}
+		const music = await Promise.all(promises);
+
+		setDir(dir);
+		setAllMusic(music);
+	}
 
 	function pause () {
 		setMusicStatus({ ...musicStatus, playing: false });
@@ -87,6 +109,8 @@ export function PlayingMusicProvider ({ ...props }) {
 			addToQueue,
 			playNextInQueue,
 			playPreviousInQueue,
+			requestLoadDirectory,
+			allMusic,
 			currentlyPlaying: musicStatus.currentlyPlaying,
 		}} />
 	);

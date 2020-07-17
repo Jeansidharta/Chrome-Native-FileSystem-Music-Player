@@ -1,5 +1,4 @@
 import React from 'react';
-import { useFileSystem } from '../../contexts/file-system';
 import MusicItem from './music-item';
 import styled from 'styled-components';
 import { usePlayingMusic } from '../../contexts/playing-music';
@@ -15,8 +14,7 @@ function extractFileName (file: File) {
 }
 
 function Home () {
-	const { fileSystem } = useFileSystem();
-	const { setQueue } = usePlayingMusic();
+	const { setQueue, allMusic } = usePlayingMusic();
 	const { makeSortFunction, setPossibleSortOptions, selectedSortOption } = useSort();
 	const { makeSearchFunction } = useSearchString();
 
@@ -34,7 +32,7 @@ function Home () {
 
 	const sortKeyExtractor = makeSortKeyExtractor();
 
-	const cleanMusicList = fileSystem?.music
+	const cleanMusicList = allMusic
 		.filter(makeSearchFunction(extractFileName))
 		.sort(makeSortFunction(sortKeyExtractor));
 
@@ -45,10 +43,10 @@ function Home () {
 	function renderMusicItems () {
 		if (!cleanMusicList) return <>Please, open a music folder.</>;
 
-		return cleanMusicList.map((musicFileHandler, index) =>
+		return cleanMusicList.map((musicFile, index) =>
 			<MusicItem
 				key={index}
-				musicFile={musicFileHandler}
+				musicFile={musicFile}
 				onClick={() => handleMusicClick(index)}
 			/>
 		);
