@@ -1,12 +1,19 @@
 import React from 'react';
 import { usePlayingMusic } from '../contexts/playing-music';
 import { useVolume } from '../contexts/volume';
+import { useMusicTimestamp } from '../contexts/music-timestamp';
 
 const MusicPlayer = () => {
-	const { musicStatus: { currentlyPlaying, playing }, playNext } = usePlayingMusic();
+	const {
+		musicStatus: { currentlyPlaying, playing },
+		playNext,
+	} = usePlayingMusic();
+	const { setAudioElemRef } = useMusicTimestamp();
 	const { volume } = useVolume();
 	const [musicURL, setMusicURL] = React.useState<string | null>(null);
 	const audioRef = React.useRef<HTMLAudioElement>(null);
+
+	React.useEffect(() => setAudioElemRef(audioRef), []);
 
 	async function updateURL () {
 		if (!currentlyPlaying) return;
