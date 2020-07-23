@@ -3,7 +3,7 @@ import { ToastContainer } from 'react-toastify';
 import Head from 'next/head';
 import Navbar from '../components/layout/navbar';
 import Providers from '../contexts';
-import MusicPlayer from '../services/MusicPlayer';
+import MusicPlayer from '../services/music-player';
 import Footer from '../components/layout/footer';
 import 'react-toastify/dist/ReactToastify.css';
 import ModalRenderer from '../services/modal-renderer';
