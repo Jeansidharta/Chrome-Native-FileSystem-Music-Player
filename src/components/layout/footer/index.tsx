@@ -5,10 +5,10 @@ import styled from 'styled-components';
 import MusicControls from './music-controls';
 import VolumeSlider from './volume-slider';
 import CurrentMusicInfo from './current-music-info';
+import MusicProgressBar from './music-progress-bar';
 
 const Root = styled.footer`
-	border-top: 1px solid rgba(0, 0, 0, 0.3);
-	padding: 16px 0;
+	padding: 0 0 16px 0;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -19,6 +19,7 @@ const Footer = () => {
 
 	return (
 		<Root>
+			<MusicProgressBar />
 			<CurrentMusicInfo />
 			<MusicControls />
 			<VolumeSlider />
