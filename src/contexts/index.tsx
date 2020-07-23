@@ -6,6 +6,7 @@ import { ModalContextProvider } from './modal';
 import { FilterProvider } from './filter';
 import { SearchStringProvider } from './search-string';
 import { SortProvider } from './sort';
+import { MusicTimestampProvider } from './music-timestamp';
 
 type ProvidersProps = React.PropsWithChildren<{}>;
 
@@ -14,17 +15,19 @@ type ProvidersComponent = React.FunctionComponent<ProvidersProps>;
 const Providers: ProvidersComponent = ({ children }) => {
 	return (
 		<PlayingMusicProvider>
-			<VolumeProvider>
-				<FilterProvider>
-					<SearchStringProvider>
-						<SortProvider>
-							<ModalContextProvider>
-								{children}
-							</ModalContextProvider>
-						</SortProvider>
-					</SearchStringProvider>
-				</FilterProvider>
-			</VolumeProvider>
+			<MusicTimestampProvider>
+				<VolumeProvider>
+					<FilterProvider>
+						<SearchStringProvider>
+							<SortProvider>
+								<ModalContextProvider>
+									{children}
+								</ModalContextProvider>
+							</SortProvider>
+						</SearchStringProvider>
+					</FilterProvider>
+				</VolumeProvider>
+			</MusicTimestampProvider>
 		</PlayingMusicProvider>
 	);
 }
