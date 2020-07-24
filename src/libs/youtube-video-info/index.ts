@@ -1,4 +1,4 @@
-import { RawYoutubeVideoInfo, YoutubeVideoInfo } from "./types";
+import { RawYoutubeVideoInfo, YoutubeVideoInfo } from "../../models/api/youtube-info";
 
 const noCorsAPI = 'https://cors-anywhere.herokuapp.com/';
 const getVideoInfoAPI = 'http://youtube.com/get_video_info';
@@ -33,9 +33,12 @@ export async function fetchRelevantVideoInfo (videoId: string) {
 		.sort((a, b) => Number(a.contentLength) - Number(b.contentLength));
 
 	const duration = info.player_response.streamingData.adaptiveFormats[0].approxDurationMs;
+	const name = info.player_response.videoDetails.title;
 
 	return {
 		streammingFormats,
-		duration,
+		/** Measured in seconds */
+		duration: Number(duration) / 1000,
+		name,
 	};
 }
