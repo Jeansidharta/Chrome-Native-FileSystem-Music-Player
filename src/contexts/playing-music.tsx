@@ -104,7 +104,10 @@ export function PlayingMusicProvider ({ ...props }) {
 			toast.error(`It seem this music has already been added. In this case, I will not be adding a duplicate.`);
 			return;
 		}
-		const info = await fetchRelevantVideoInfo(videoId);
+		const info = await fetchRelevantVideoInfo(videoId).catch((e: Error) => {
+			toast.error(e.message);
+		});
+		if (!info) return;
 
 		const music: YoutubeEntry = {
 			id: videoId,
