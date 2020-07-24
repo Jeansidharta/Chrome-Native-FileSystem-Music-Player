@@ -54,6 +54,16 @@ const Images = {
 			alt: 'Arrow up Icon',
 			...props,
 		}))``,
+		File: styled(BaseImage).attrs(props => ({
+			src: '/icons/file-icon.svg',
+			alt: 'A File Icon',
+			...props,
+		}))``,
+		YoutubePlayButton: styled(BaseImage).attrs(props => ({
+			src: '/icons/youtube-icon.svg',
+			alt: 'A Youtube Play Button Icon',
+			...props,
+		}))``,
 	}
 }
 
