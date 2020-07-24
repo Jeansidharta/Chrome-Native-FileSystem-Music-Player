@@ -8,6 +8,7 @@ import Footer from '../components/layout/footer';
 import 'react-toastify/dist/ReactToastify.css';
 import ModalRenderer from '../services/modal-renderer';
 import DocumentTitleUpdater from '../services/document-title-updater';
+import Shortcuts from '../services/shortcuts';
 
 type MyAppProps = React.PropsWithoutRef<{
 	Component: any,
@@ -43,6 +44,7 @@ const MyApp: MyAppComponent = ({ Component, pageProps }) => {
 				<MusicPlayer />
 				<ModalRenderer />
 				<DocumentTitleUpdater />
+				<Shortcuts />
 			</Providers>
 		</>
 	);
