@@ -7,7 +7,7 @@ import { useFilter } from '../../../contexts/filter';
 const Root = styled.div`
 `;
 
-function useSortModal () {
+function useFilterModal () {
 	const { openModal } = useModal();
 	const { possibleFilterOptions } = useFilter();
 
@@ -21,4 +21,4 @@ function useSortModal () {
 	);
 }
 
-export default useSortModal;
+export default useFilterModal;
