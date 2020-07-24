@@ -15,7 +15,7 @@ const Root = styled.div`
 	width: 100%;
 `;
 
-const SearchInput = styled.input.attrs(props => ({ type: 'text', ...props }))`
+const SearchInput = styled.input.attrs(props => ({ type: 'text', name: 'search-bar', ...props }))`
 	max-width: 200px;
 	width: 100%;
 	padding: 4px 8px;

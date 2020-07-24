@@ -12,6 +12,13 @@ const Shortcuts: ShortcutsComponent = () => {
 	const { updateVolume, volume } = useVolume();
 
 	function handleHeyDown (event: KeyboardEvent) {
+		let target = event.target as HTMLElement | null;
+		if (!target) return;
+		do {
+			if (target.nodeName === 'INPUT' && target.getAttribute('type') === 'text') return;
+			target = target.parentElement;
+		} while (target);
+
 		const key = event.key.toLowerCase();
 		if (key === 'k') {
 			if (musicStatus.playing) pause();
