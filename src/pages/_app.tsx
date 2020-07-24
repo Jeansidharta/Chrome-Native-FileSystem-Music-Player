@@ -19,6 +19,7 @@ import Footer from '../components/layout/footer';
 
 // Misc
 import Providers from '../contexts';
+import LinkPasting from '../services/link-pasting';
 
 type MyAppProps = React.PropsWithoutRef<{
 	Component: any,
@@ -56,6 +57,7 @@ const MyApp: MyAppComponent = ({ Component, pageProps }) => {
 				<DocumentTitleUpdater />
 				<Shortcuts />
 				<DragAndDrop />
+				<LinkPasting />
 			</Providers>
 		</>
 	);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { MusicEntry } from '../../../models/music';
+import { MusicEntry, isLocalMusicEntry } from '../../../models/music';
 import Spinner from '../spinner';
 import findMusicDuration from '../../../libs/find-music-duration';
 
@@ -14,6 +14,7 @@ const DisplayMusicDuration: DisplayMusicDurationComponent = ({ music }) => {
 
 	React.useEffect(() => {
 		if (music.duration) return;
+		if (!isLocalMusicEntry(music)) return;
 		findMusicDuration(music.file).then(duration => {
 			music.duration = duration;
 			setDuration(duration);
