@@ -1,15 +1,16 @@
 import { AdaptiveFormat } from "./api/youtube-info";
 
 export interface MusicEntry {
-	id: string,
+	id: string | Promise<string>,
 	/** Measured in seconds */
-	duration: number | null,
+	duration: number | Promise<number>,
 	name: string,
 }
 
 export interface YoutubeEntry extends MusicEntry {
 	duration: number,
-	audioStreams: AdaptiveFormat[];
+	audioStreams: AdaptiveFormat[],
+	id: string,
 }
 
 export interface LocalMusicEntry extends MusicEntry {

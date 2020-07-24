@@ -3,6 +3,7 @@ import { LocalMusicEntry, YoutubeEntry, MusicEntry } from '../models/music';
 import { openDirectory } from '../libs/file-helpers';
 import { toast } from 'react-toastify';
 import { fetchRelevantVideoInfo } from '../libs/youtube-video-info';
+import findMusicDuration from '../libs/find-music-duration';
 
 type PlayingMusicContext = {
 	pause: () => void,
@@ -47,12 +48,31 @@ export function PlayingMusicProvider ({ ...props }) {
 		}
 		const files = await Promise.all(promises);
 
-		const musicEntries = files.map((file, index) => ({
-			file,
-			duration: null,
-			id: index.toString(),
-			name: file.name,
-		}));
+		const musicEntries = files.map((file, index) => {
+			const music: LocalMusicEntry = {
+				file,
+				duration: findMusicDuration(file),
+				id: index.toString(),
+				name: file.name,
+			};
+
+			(music.duration as Promise<number>)
+				.then(duration => music.duration = duration)
+				.catch(e => {
+					console.error(e);
+					toast.error(`Unable to read file '${music.name}' (are you sure it's a music?). File will be removed from music list.`);
+					setAllMusic(state => {
+						const index = state.findIndex(stateMusic => music === stateMusic);
+						if (!index) return state;
+						const newState = [...state];
+						newState.splice(index, 1);
+						return newState;
+					})
+				});
+
+			return music;
+		});
+
 
 		setDir(dir);
 		setAllMusic(musicEntries.filter(e => e) as LocalMusicEntry[]);
