@@ -1,23 +1,23 @@
 import React from 'react';
-import { MusicEntry } from '../models';
+import { LocalMusicEntry } from '../models';
 import { openDirectory } from '../libs/file-helpers';
 
 type PlayingMusicContext = {
 	pause: () => void,
 	resume: () => void,
 	musicStatus: MusicStatusState,
-	play: (music: MusicEntry) => void,
+	play: (music: LocalMusicEntry) => void,
 	playNext: () => void,
 	playPrevious: () => void,
-	currentlyPlaying: MusicEntry | null,
+	currentlyPlaying: LocalMusicEntry | null,
 	requestLoadDirectory: () => Promise<void>,
-	updateMusicDuration: (music: MusicEntry, duration: number) => void,
-	allMusic: MusicEntry[],
+	updateMusicDuration: (music: LocalMusicEntry, duration: number) => void,
+	allMusic: LocalMusicEntry[],
 }
 
 type MusicStatusState = {
 	playing: boolean,
-	currentlyPlaying: null | MusicEntry,
+	currentlyPlaying: null | LocalMusicEntry,
 };
 
 const defaultMusicStatus: MusicStatusState = {
@@ -28,7 +28,7 @@ const defaultMusicStatus: MusicStatusState = {
 const playingMusicContext = React.createContext<PlayingMusicContext>(null as any);
 
 export function PlayingMusicProvider ({ ...props }) {
-	const [allMusic, setAllMusic] = React.useState<MusicEntry[]>([]);
+	const [allMusic, setAllMusic] = React.useState<LocalMusicEntry[]>([]);
 	const [musicStatus, setMusicStatus] = React.useState<MusicStatusState>(defaultMusicStatus);
 
 	// DO NOT REMOVE THIS
@@ -48,7 +48,7 @@ export function PlayingMusicProvider ({ ...props }) {
 		const musicEntries = files.map(file => ({ file, duration: null }));
 
 		setDir(dir);
-		setAllMusic(musicEntries.filter(e => e) as MusicEntry[]);
+		setAllMusic(musicEntries.filter(e => e) as LocalMusicEntry[]);
 	}
 
 	function pause () {
@@ -59,17 +59,17 @@ export function PlayingMusicProvider ({ ...props }) {
 		setMusicStatus({ ...musicStatus, playing: true });
 	}
 
-	function play (currentlyPlaying: MusicEntry) {
+	function play (currentlyPlaying: LocalMusicEntry) {
 		setMusicStatus({ ...musicStatus, currentlyPlaying, playing: true });
 	}
 
-	function findMusicIndex (music: MusicEntry) {
+	function findMusicIndex (music: LocalMusicEntry) {
 		return allMusic.findIndex(f => f.file === music.file);
 	}
 
 	function playNext () {
 		const { currentlyPlaying } = musicStatus;
-		let nextMusic: MusicEntry;
+		let nextMusic: LocalMusicEntry;
 		if (!currentlyPlaying) {
 			nextMusic = allMusic[0];
 		} else {
@@ -83,7 +83,7 @@ export function PlayingMusicProvider ({ ...props }) {
 
 	function playPrevious () {
 		const { currentlyPlaying } = musicStatus;
-		let prevMusic: MusicEntry;
+		let prevMusic: LocalMusicEntry;
 		if (!currentlyPlaying) return false;
 		const prevIndex = findMusicIndex(currentlyPlaying) - 1;
 		if (prevIndex < 0) return false;
@@ -92,7 +92,7 @@ export function PlayingMusicProvider ({ ...props }) {
 		return true;
 	}
 
-	function updateMusicDuration (music: MusicEntry, duration: number) {
+	function updateMusicDuration (music: LocalMusicEntry, duration: number) {
 		const musicIndex = findMusicIndex(music);
 		const newAllMusic = [...allMusic];
 		newAllMusic[musicIndex] = { ...music, duration };
