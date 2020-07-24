@@ -43,16 +43,19 @@ interface WebPlayerActionsPorting {
 	},
 }
 
-export interface AdaptiveFormat {
-	audioChannels?: 2,
-	audioQuality?: string,
+export interface AdaptiveFormat<
+	Access extends 'cyphered' | 'unlocked' | unknown = unknown,
+	FileType extends 'video' | 'audio' | unknown = unknown,
+> {
+	audioChannels: FileType extends 'audio' ? number : undefined,
+	audioQuality: FileType extends 'audio' ? string : undefined,
 	/** This string is actually a number */
-	audioSampleRate?: string,
+	audioSampleRate: FileType extends 'audio' ? string : undefined,
 
-	fps?: number,
-	height?: number,
-	width?: number,
-	qualityLabel?: string,
+	fps: FileType extends 'video' ? number : undefined,
+	height: FileType extends 'video' ? number : undefined,
+	width: FileType extends 'video' ? number : undefined,
+	qualityLabel: FileType extends 'video' ? string : undefined,
 
 	/** This string is actually a number */
 	approxDurationMs: string,
@@ -72,7 +75,8 @@ export interface AdaptiveFormat {
 	mimeType: string,
 	projectionType: string,
 	quality: string,
-	url: string,
+	url: Access extends 'unlocked' ? string : undefined,
+	signatureCipher: Access extends 'cyphered' ? string : undefined,
 }
 
 interface PlayerResponse {
@@ -370,7 +374,7 @@ interface PlayerResponse {
 			spec: string,
 		},
 	},
-	streamingData: {
+	streamingData?: {
 		expiresInSeconds: string,
 		formats: {
 			approxDurationMs: string,
