@@ -35,7 +35,7 @@ const Root = styled.button<React.PropsWithoutRef<{ size: number, disabled: boole
 type IconButtonProps = React.PropsWithoutRef<{
 	icon: JSX.Element,
 	size?: 'small' | 'medium' | 'large' | number,
-	disabled: boolean,
+	disabled?: boolean,
 	actionDescription: string,
 }> & React.ComponentPropsWithoutRef<'button'>;
 
@@ -45,7 +45,7 @@ const IconButton: IconButtonComponent = ({
 	icon,
 	children,
 	size = 'medium',
-	disabled,
+	disabled = false,
 	actionDescription,
 	...props
 }) => {

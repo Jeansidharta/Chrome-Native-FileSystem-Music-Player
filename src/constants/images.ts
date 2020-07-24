@@ -4,6 +4,8 @@ const BaseImage = styled.img`
 	object-fit: contain;
 	width: 100%;
 	height: 100%;
+	user-drag: none;
+	user-select: none;
 	${(props: { css?: FlattenSimpleInterpolation }) => props.css || ''};
 `;
 
@@ -62,6 +64,21 @@ const Images = {
 		YoutubePlayButton: styled(BaseImage).attrs(props => ({
 			src: '/icons/youtube-icon.svg',
 			alt: 'A Youtube Play Button Icon',
+			...props,
+		}))``,
+		AddFile: styled(BaseImage).attrs(props => ({
+			src: '/icons/add-file.svg',
+			alt: 'Add File Icon',
+			...props,
+		}))``,
+		AddFolder: styled(BaseImage).attrs(props => ({
+			src: '/icons/add-folder.svg',
+			alt: 'Add folder Icon',
+			...props,
+		}))``,
+		AddFromYoutube: styled(BaseImage).attrs(props => ({
+			src: '/icons/add-youtube-icon.svg',
+			alt: 'Add a Youtube Video Icon',
 			...props,
 		}))``,
 	}
