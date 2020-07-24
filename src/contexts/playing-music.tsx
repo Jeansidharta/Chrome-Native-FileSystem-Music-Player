@@ -60,7 +60,14 @@ export function PlayingMusicProvider ({ ...props }) {
 	}
 
 	async function loadMusicFromHyperlink (link: string) {
-		const url = new URL(link);
+		let url: URL;
+		try {
+			url = new URL(link);
+		} catch (e) {
+			console.error(e);
+			toast.error('Whoops, it seems this is not a valid link!');
+			return;
+		}
 		if (url.hostname !== 'www.youtube.com') {
 			toast.error('Sorry, but I can only work with Youtube links');
 			return;
@@ -72,6 +79,10 @@ export function PlayingMusicProvider ({ ...props }) {
 		const videoId = url.searchParams.get('v');
 		if (!videoId) {
 			toast.error(`I could not identify what video you are watching... Make sure your URL has the '?v=somelargestring' thing in it`);
+			return;
+		}
+		if (findMusicById(videoId)) {
+			toast.error(`It seem this music has already been added. In this case, I will not be adding a duplicate.`);
 			return;
 		}
 		const info = await fetchRelevantVideoInfo(videoId);
@@ -100,6 +111,10 @@ export function PlayingMusicProvider ({ ...props }) {
 
 	function findMusicIndex (music: MusicEntry) {
 		return allMusic.findIndex(f => f.id === music.id);
+	}
+
+	function findMusicById (id: string) {
+		return allMusic.find(f => f.id === id);
 	}
 
 	function playNext () {
