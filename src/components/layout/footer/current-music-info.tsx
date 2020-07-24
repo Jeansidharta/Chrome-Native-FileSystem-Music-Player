@@ -17,7 +17,7 @@ const CurrentMusicInfo: CurrentMusicInfoComponent = () => {
 	const { musicStatus: { currentlyPlaying } } = usePlayingMusic();
 
 	function renderCurrentMusicInfo () {
-		const musicName = currentlyPlaying?.file.name || 'Nothing playing';
+		const musicName = currentlyPlaying?.name || 'Nothing playing';
 		return (
 			<MusicName>{musicName}</MusicName>
 		);

@@ -4,14 +4,14 @@ import styled from 'styled-components';
 import { usePlayingMusic } from '../../contexts/playing-music';
 import { useSort } from '../../contexts/sort';
 import { useSearchString } from '../../contexts/search-string';
-import { LocalMusicEntry } from '../../models';
+import { MusicEntry } from '../../models/music';
 
 const MainRoot = styled.main`
 	padding: 32px;
 `;
 
-function extractMusicName (music: LocalMusicEntry) {
-	return music.file.name;
+function extractMusicName (music: MusicEntry) {
+	return music.name;
 }
 
 function Home () {
@@ -27,7 +27,7 @@ function Home () {
 		if (!selectedSortOption) {
 			return () => '';
 		} else if(selectedSortOption.name === 'name') {
-			return (music: LocalMusicEntry) => music.file.name;
+			return (music: MusicEntry) => music.name;
 		} else throw new Error(`invalid sort option '${selectedSortOption.name}'`);
 	}
 
@@ -37,7 +37,7 @@ function Home () {
 		.filter(makeSearchFunction(extractMusicName))
 		.sort(makeSortFunction(sortKeyExtractor));
 
-	function handleMusicClick (music: LocalMusicEntry) {
+	function handleMusicClick (music: MusicEntry) {
 		play(music);
 	}
 

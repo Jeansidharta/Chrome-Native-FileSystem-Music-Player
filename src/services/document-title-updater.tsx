@@ -9,7 +9,7 @@ const DocumentTitleUpdater = () => {
 		if (!currentlyPlaying) {
 			document.title = 'Music';
 		} else {
-			document.title = currentlyPlaying?.file.name;
+			document.title = currentlyPlaying?.name;
 		}
 	}, [currentlyPlaying]);
 

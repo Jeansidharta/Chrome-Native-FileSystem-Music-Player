@@ -1,23 +1,26 @@
 import React from 'react';
-import { LocalMusicEntry } from '../models';
+import { LocalMusicEntry, YoutubeEntry, MusicEntry } from '../models/music';
 import { openDirectory } from '../libs/file-helpers';
+import { toast } from 'react-toastify';
+import { fetchRelevantVideoInfo } from '../libs/youtube-video-info';
 
 type PlayingMusicContext = {
 	pause: () => void,
 	resume: () => void,
 	musicStatus: MusicStatusState,
-	play: (music: LocalMusicEntry) => void,
+	play: (music: MusicEntry) => void,
 	playNext: () => void,
 	playPrevious: () => void,
-	currentlyPlaying: LocalMusicEntry | null,
+	currentlyPlaying: MusicEntry | null,
 	requestLoadDirectory: () => Promise<void>,
-	updateMusicDuration: (music: LocalMusicEntry, duration: number) => void,
-	allMusic: LocalMusicEntry[],
+	updateMusicDuration: (music: MusicEntry, duration: number) => void,
+	loadMusicFromHyperlink: (link: string) => void,
+	allMusic: MusicEntry[],
 }
 
 type MusicStatusState = {
 	playing: boolean,
-	currentlyPlaying: null | LocalMusicEntry,
+	currentlyPlaying: null | MusicEntry,
 };
 
 const defaultMusicStatus: MusicStatusState = {
@@ -28,7 +31,7 @@ const defaultMusicStatus: MusicStatusState = {
 const playingMusicContext = React.createContext<PlayingMusicContext>(null as any);
 
 export function PlayingMusicProvider ({ ...props }) {
-	const [allMusic, setAllMusic] = React.useState<LocalMusicEntry[]>([]);
+	const [allMusic, setAllMusic] = React.useState<MusicEntry[]>([]);
 	const [musicStatus, setMusicStatus] = React.useState<MusicStatusState>(defaultMusicStatus);
 
 	// DO NOT REMOVE THIS
@@ -45,10 +48,42 @@ export function PlayingMusicProvider ({ ...props }) {
 		}
 		const files = await Promise.all(promises);
 
-		const musicEntries = files.map(file => ({ file, duration: null }));
+		const musicEntries = files.map((file, index) => ({
+			file,
+			duration: null,
+			id: index.toString(),
+			name: file.name,
+		}));
 
 		setDir(dir);
 		setAllMusic(musicEntries.filter(e => e) as LocalMusicEntry[]);
+	}
+
+	async function loadMusicFromHyperlink (link: string) {
+		const url = new URL(link);
+		if (url.hostname !== 'www.youtube.com') {
+			toast.error('Sorry, but I can only work with Youtube links');
+			return;
+		}
+		if (url.pathname !== '/watch') {
+			toast.error('You must give me the link of a Youtube video.');
+			return;
+		}
+		const videoId = url.searchParams.get('v');
+		if (!videoId) {
+			toast.error(`I could not identify what video you are watching... Make sure your URL has the '?v=somelargestring' thing in it`);
+			return;
+		}
+		const info = await fetchRelevantVideoInfo(videoId);
+
+		const music: YoutubeEntry = {
+			id: videoId,
+			duration: info.duration,
+			audioStreams: info.streammingFormats,
+			name: info.name,
+		};
+
+		setAllMusic(state => [...state, music]);
 	}
 
 	function pause () {
@@ -59,17 +94,17 @@ export function PlayingMusicProvider ({ ...props }) {
 		setMusicStatus({ ...musicStatus, playing: true });
 	}
 
-	function play (currentlyPlaying: LocalMusicEntry) {
+	function play (currentlyPlaying: MusicEntry) {
 		setMusicStatus({ ...musicStatus, currentlyPlaying, playing: true });
 	}
 
-	function findMusicIndex (music: LocalMusicEntry) {
-		return allMusic.findIndex(f => f.file === music.file);
+	function findMusicIndex (music: MusicEntry) {
+		return allMusic.findIndex(f => f.id === music.id);
 	}
 
 	function playNext () {
 		const { currentlyPlaying } = musicStatus;
-		let nextMusic: LocalMusicEntry;
+		let nextMusic: MusicEntry;
 		if (!currentlyPlaying) {
 			nextMusic = allMusic[0];
 		} else {
@@ -83,7 +118,7 @@ export function PlayingMusicProvider ({ ...props }) {
 
 	function playPrevious () {
 		const { currentlyPlaying } = musicStatus;
-		let prevMusic: LocalMusicEntry;
+		let prevMusic: MusicEntry;
 		if (!currentlyPlaying) return false;
 		const prevIndex = findMusicIndex(currentlyPlaying) - 1;
 		if (prevIndex < 0) return false;
@@ -92,7 +127,7 @@ export function PlayingMusicProvider ({ ...props }) {
 		return true;
 	}
 
-	function updateMusicDuration (music: LocalMusicEntry, duration: number) {
+	function updateMusicDuration (music: MusicEntry, duration: number) {
 		const musicIndex = findMusicIndex(music);
 		const newAllMusic = [...allMusic];
 		newAllMusic[musicIndex] = { ...music, duration };
@@ -111,6 +146,7 @@ export function PlayingMusicProvider ({ ...props }) {
 			allMusic,
 			updateMusicDuration,
 			currentlyPlaying: musicStatus.currentlyPlaying,
+			loadMusicFromHyperlink,
 		}} />
 	);
 }

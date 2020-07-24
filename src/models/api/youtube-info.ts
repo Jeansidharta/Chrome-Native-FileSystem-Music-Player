@@ -43,7 +43,7 @@ interface WebPlayerActionsPorting {
 	},
 }
 
-interface AdaptiveFormat {
+export interface AdaptiveFormat {
 	audioChannels?: 2,
 	audioQuality?: string,
 	/** This string is actually a number */

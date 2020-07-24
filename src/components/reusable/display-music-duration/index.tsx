@@ -1,5 +1,5 @@
 import React from 'react';
-import { MusicEntry } from '../../../models';
+import { MusicEntry } from '../../../models/music';
 import Spinner from '../spinner';
 import findMusicDuration from '../../../libs/find-music-duration';
 
