@@ -20,6 +20,7 @@ import Footer from '../components/layout/footer';
 // Misc
 import Providers from '../contexts';
 import LinkPasting from '../services/link-pasting';
+import FilledThemeProvider from '../theme';
 
 type MyAppProps = React.PropsWithoutRef<{
 	Component: any,
@@ -44,21 +45,23 @@ const MyApp: MyAppComponent = ({ Component, pageProps }) => {
 			</Head>
 
 			<ToastContainer hideProgressBar />
-			<Providers>
-				<div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-					<Navbar />
-					<div style={{ height: '100%', overflowY: 'auto' }}>
-						<Component {...pageProps} />
+			<FilledThemeProvider>
+				<Providers>
+					<div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+						<Navbar />
+						<div style={{ height: '100%', overflowY: 'auto' }}>
+							<Component {...pageProps} />
+						</div>
+						<Footer />
 					</div>
-					<Footer />
-				</div>
-				<MusicPlayer />
-				<ModalRenderer />
-				<DocumentTitleUpdater />
-				<Shortcuts />
-				<DragAndDrop />
-				<LinkPasting />
-			</Providers>
+					<MusicPlayer />
+					<ModalRenderer />
+					<DocumentTitleUpdater />
+					<Shortcuts />
+					<DragAndDrop />
+					<LinkPasting />
+				</Providers>
+			</FilledThemeProvider>
 		</>
 	);
 }
