@@ -1,5 +1,6 @@
 declare module 'xxhashjs' {
 	type UInt = {
+		/** @argument radix Must be a number between 2 and 36 */
 		toString(radix: number): string,
 		toNumber(): number,
 	};
