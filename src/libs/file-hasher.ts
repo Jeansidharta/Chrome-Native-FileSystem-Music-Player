@@ -1,11 +1,10 @@
-import xxHash from 'xxhashjs';
+function escapeFileName (name: string) {
+	name = name.replace(/\|/g, '\\|');
+	return name.replace(/\\/g, '\\');
+}
 
-const seed = 123;
-
-const hasher = xxHash.h64(seed);
-
-async function hashFile (file: File) {
-	return hasher.update(await file.arrayBuffer()).digest().toString(64);
+function hashFile (file: File) {
+	return `${escapeFileName(file.name)}|${file.size}`;
 }
 
 export default hashFile;
