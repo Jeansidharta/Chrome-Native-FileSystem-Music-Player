@@ -15,6 +15,23 @@ declare module "styled-components" {
 			secondary: {
 				main: string,
 			},
+			success: {
+				lighter: string,
+				light: string,
+				normal: string,
+				dark: string,
+			},
+			error: {
+				lighter: string,
+				light: string,
+				normal: string,
+				dark: string,
+			},
+			warning: {
+				light: string,
+				normal: string,
+				dark: string,
+			},
 			gray: {
 				light: string,
 			},
@@ -37,7 +54,24 @@ const theme: DefaultTheme = {
 		},
 		gray: {
 			light: '#dddddd',
-		}
+		},
+		success: {
+			lighter: '#a7d7a9',
+			light: '#81c784',
+			normal: '#4caf50',
+			dark: '#388e3c',
+		},
+		error: {
+			lighter: '#eb9393',
+			light: '#e57373',
+			normal: '#f44336',
+			dark: '#d32f2f',
+		},
+		warning: {
+			light: '#ffb74d',
+			normal: '#ff9800',
+			dark: '#f57c00',
+		},
 	},
 	shadows: {
 		small: {

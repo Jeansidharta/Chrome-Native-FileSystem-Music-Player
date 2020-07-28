@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { useTheme } from 'styled-components';
+import styled, { useTheme, DefaultTheme } from 'styled-components';
 
 const Root = styled.button<{ color?: string, scaleOffset: number }>`
 	text-transform: uppercase;
@@ -23,10 +23,14 @@ const Root = styled.button<{ color?: string, scaleOffset: number }>`
 	}
 `;
 
+function isThemeColor (theme: DefaultTheme, color: string): color is keyof DefaultTheme['colors'] {
+	return Boolean((theme.colors as any)[color]);
+}
+
 type OutlineButtonProps = React.PropsWithChildren<{
-	/** Could be a hex color, or either 'primary' or 'secondary', for theme use.
+	/** Could be a hex color, or a theme color (e.g. 'primary' or 'success').
 	* If none specified, defaults to a light gray color */
-	color?: string,
+	color?: keyof DefaultTheme['colors'] | string,
 
 	/** How much the button will expand/contract when hovered/held. Defaults to 0.1 */
 	scaleOffset?: number,
@@ -47,9 +51,11 @@ const OutlineButton: OutlineButtonComponent = ({
 	const theme = useTheme();
 
 	let hexColor: string | undefined;
-	if (color === 'primary') hexColor = theme.colors.primary.main;
-	else if (color === 'secondary') hexColor = theme.colors.secondary.main;
-	else hexColor = color;
+	if (!color) hexColor = color;
+	else if (isThemeColor(theme, color)) {
+		const colorObject = theme.colors[color] as { main?: string, normal?: string };
+		hexColor = colorObject.main || colorObject.normal;
+	} else hexColor = color;
 
 	return (
 		<Root
