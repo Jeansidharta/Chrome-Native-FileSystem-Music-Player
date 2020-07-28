@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { usePlayingMusic } from '../../../contexts/playing-music';
 import useShortcutModal from '../../modals/shortcuts-modal';
+import useAddMusicModal from '../../modals/add-music-modal';
 
 const Root = styled.div`
 	display: flex;
@@ -35,13 +35,13 @@ type ActionButtonsProps = React.PropsWithoutRef<{}>;
 type ActionButtonsComponent = React.FunctionComponent<ActionButtonsProps>;
 
 const ActionButtons: ActionButtonsComponent = () => {
-	const { requestLoadDirectory } = usePlayingMusic();
 	const openShortcutModal = useShortcutModal();
+	const openAddMusicModal = useAddMusicModal();
 
 	return (
 		<Root>
 			<Button onClick={openShortcutModal}>Shortcuts</Button>
-			<Button onClick={requestLoadDirectory}>Add files<br/>from folder</Button>
+			<Button onClick={() => openAddMusicModal()}>Add files<br/>from folder</Button>
 		</Root>
 	);
 }

@@ -18,7 +18,7 @@ const BarContainer = styled.div`
 	}
 `;
 
-const BarProgress = styled.div<{ progress: number }>`
+const BarProgress = styled.div`
 	background-color: palegreen;
 	height: 100%;
 `;
@@ -37,7 +37,8 @@ const MusicProgressBar: MusicProgressBarComponent = ({  }) => {
 
 	React.useEffect(() => {
 		function updateProgressBar () {
-			const totalDuration = currentlyPlaying!.duration;
+			let totalDuration = currentlyPlaying!.duration;
+			if (typeof totalDuration !== 'number') totalDuration = 0;
 			if (!totalDuration) return setProgress(0);
 			const timestamp = getTimestamp() || 0;
 			const percentage = 100 * timestamp / totalDuration;
@@ -56,7 +57,8 @@ const MusicProgressBar: MusicProgressBarComponent = ({  }) => {
 		const x = event.clientX - target.offsetLeft;
 		const width = target.clientWidth;
 		const percentage = x / width;
-		const duration = currentlyPlaying?.duration || 0;
+		let duration = currentlyPlaying?.duration || 0;
+		if (typeof duration !== 'number') duration = 0;
 		const newTimestamp = duration * percentage;
 		setTimestamp(newTimestamp);
 		setProgress(100 * percentage);
@@ -84,8 +86,7 @@ const MusicProgressBar: MusicProgressBarComponent = ({  }) => {
 		<Root>
 			<BarContainer onMouseDown={handleBarMouseDown}>
 				<BarProgress
-					progress={progress}
-					style={{ width: progress + '%' }}
+					style={{ width: isFinite(progress) ? progress + '%' : '0' }}
 				/>
 			</BarContainer>
 		</Root>
