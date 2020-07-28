@@ -14,7 +14,7 @@ const Button = styled.button`
 	cursor: pointer;
 	background-color: transparent;
 	border: none;
-	box-shadow: -2px 2px 2px rgba(0, 0, 0, 0.2);
+	box-shadow: ${props => props.theme.shadows.small.normal};
 	border-radius: 8px;
 	padding: 4px 8px;
 	font-size: 12px;
@@ -22,11 +22,11 @@ const Button = styled.button`
 	outline: none;
 	margin: 0 8px;
 	:hover, :focus {
-		box-shadow: -4px 4px 4px rgba(0, 0, 0, 0.1);
+		box-shadow: ${props => props.theme.shadows.small.hover};
 		transform: scale(1.1);
 	}
 	:active {
-		box-shadow: -1px 1px 1px rgba(0, 0, 0, 0.4);
+		box-shadow: ${props => props.theme.shadows.small.active};
 		transform: scale(0.9);
 	}
 `;

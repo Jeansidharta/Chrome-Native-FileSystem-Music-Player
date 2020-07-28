@@ -1,5 +1,11 @@
 import { ThemeProvider, DefaultTheme } from 'styled-components';
 
+type ShadowSize = {
+	normal: string,
+	hover: string,
+	active: string,
+}
+
 declare module "styled-components" {
   export interface DefaultTheme {
 		colors: {
@@ -9,11 +15,14 @@ declare module "styled-components" {
 			secondary: {
 				main: string,
 			},
+			gray: {
+				light: string,
+			},
 		},
 		shadows: {
-			small: string,
-			medium: string,
-			large: string,
+			small: ShadowSize
+			medium: ShadowSize,
+			large: ShadowSize,
 		}
   }
 }
@@ -26,11 +35,26 @@ const theme: DefaultTheme = {
 		secondary: {
 			main: '#98fb98',
 		},
+		gray: {
+			light: '#dddddd',
+		}
 	},
 	shadows: {
-		small: '-2px 2px 4px rgba(0,0,0,0.2)',
-		medium: '-3px 3px 3px rgba(0,0,0,0.3)',
-		large: '-2px 2px 4px rgba(0,0,0,0.2)',
+		small: {
+			hover: '-3px 3px 3px rgba(0, 0, 0, 0.1)',
+			normal: '-2px 2px 2px rgba(0, 0, 0, 0.2)',
+			active: '-1px 1px 1px rgba(0, 0, 0, 0.4)',
+		},
+		medium: {
+			hover: '-3px 3px 3px rgba(0, 0, 0, 0.3)',
+			normal: '-3px 3px 3px rgba(0, 0, 0, 0.3)',
+			active: '-3px 3px 3px rgba(0, 0, 0, 0.3)',
+		},
+		large: {
+			hover: '-2px 2px 4px rgba(0, 0, 0, 0.2)',
+			normal: '-2px 2px 4px rgba(0, 0, 0, 0.2)',
+			active: '-2px 2px 4px rgba(0, 0, 0, 0.2)',
+		},
 	},
 };
 
