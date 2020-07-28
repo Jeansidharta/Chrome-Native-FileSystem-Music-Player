@@ -1,6 +1,17 @@
 import { toast } from "react-toastify";
+import findMusicDuration from "./find-music-duration";
+import hashFile from "./file-hasher";
+import { LocalMusicEntry } from "../models/music";
 
-export async function openDirectory () {
+// DO NOT REMOVE THIS
+// This is related to a bug in chrome. See this repo: https://github.com/Jeansidharta/chrome-bug-report---native-file-system-api
+const previouslyOpenDirectories: FileSystemDirectoryHandle[] = [];
+
+/**
+* This is a function that will call Chrome's API directly, which will ask the user
+* to select a directory, and return that directory's file handler
+*/
+async function openDirectory () {
 	let promise;
 	try {
 		promise = window.chooseFileSystemEntries({ type: 'open-directory' })
@@ -9,5 +20,40 @@ export async function openDirectory () {
 		throw e;
 	}
 	const handle = await promise;
+	previouslyOpenDirectories.push(handle);
 	return handle;
+}
+
+/**
+* This will prompt the user to open a directory, and will return all files
+* inside that directory
+* @returns An array of files, or undefined if any errors occurred
+*/
+export async function openAndFetchAllDirectoryFiles () {
+	const dir = await openDirectory().catch(e => console.error(e));
+	if (!dir) return;
+
+	const promises: Promise<File>[] = [];
+	for await(const file of dir.getEntries()) {
+		promises.push(file.getFile());
+	}
+	const files = await Promise.all(promises);
+	return files;
+}
+
+export async function openDirectoryAsMusicEntries () {
+	const files = await openAndFetchAllDirectoryFiles();
+	if (!files) return;
+
+	const musicEntries: LocalMusicEntry[] = files.map(file => {
+		const entry: LocalMusicEntry = {
+			file,
+			duration: () => entry.duration = findMusicDuration(file).then(duration => entry.duration = duration),
+			name: file.name,
+			id: hashFile(file),
+		};
+		return entry;
+	});
+
+	return musicEntries;
 }

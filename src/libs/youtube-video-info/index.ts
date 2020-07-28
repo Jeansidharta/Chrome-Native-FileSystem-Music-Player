@@ -1,4 +1,6 @@
 import { RawYoutubeVideoInfo, YoutubeVideoInfo } from "../../models/api/youtube-info";
+import { YoutubeItem } from "../../components/modals/add-music-modal/music-modal";
+import { YoutubeEntry } from "../../models/music";
 
 const noCorsAPI = 'https://cors-anywhere.herokuapp.com/';
 const getVideoInfoAPI = 'http://youtube.com/get_video_info';
@@ -52,4 +54,51 @@ export async function fetchRelevantVideoInfo (videoId: string) {
 		duration: Number(duration) / 1000,
 		name,
 	};
+}
+
+export function makeMusicEntryFromURL (link: string) {
+	let url: URL;
+	try {
+		url = new URL(link);
+	} catch (e) {
+		throw new Error('Whoops, it seems this is not a valid link!');
+	}
+	if (url.hostname !== 'www.youtube.com') {
+		throw new Error('Sorry, but I can only work with Youtube links');
+	}
+	if (url.pathname !== '/watch') {
+		throw new Error('You must give me the link of a Youtube video.');
+	}
+	const videoId = url.searchParams.get('v');
+	if (!videoId) {
+		throw new Error(`I could not identify what video you are watching... Make sure your URL has the '?v=somelargestring' thing in it`);
+	}
+
+	// This "external variable" is here to prevent making multiple requests to youtube's servers.
+	let fetchingPromise: null | Promise<any> = null;
+
+	const infoFetcher = () => {
+		if (fetchingPromise) return fetchingPromise;
+
+		fetchingPromise = fetchRelevantVideoInfo(videoId).then(info => {
+			entry.duration = info.duration;
+			entry.audioStreams = info.streammingFormats;
+			entry.name = info.name;
+			return info;
+		});
+
+		entry.duration = fetchingPromise.then(info => info.duration);
+		entry.audioStreams = fetchingPromise.then(info => info.streammingFormats);
+		entry.name = fetchingPromise.then(info => info.name);
+		return fetchingPromise;
+	}
+
+	const entry: YoutubeEntry = {
+		id: videoId,
+		duration: () => infoFetcher().then(info => info.duration),
+		audioStreams: () => infoFetcher().then(info => info.streammingFormats),
+		name: () => infoFetcher().then(info => info.name),
+	};
+
+	return entry;
 }

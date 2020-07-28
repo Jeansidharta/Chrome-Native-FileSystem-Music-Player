@@ -1,9 +1,7 @@
 import React from 'react';
-import { LocalMusicEntry, YoutubeEntry, MusicEntry } from '../models/music';
-import { openDirectory } from '../libs/file-helpers';
+import { MusicEntry, YoutubeEntry } from '../models/music';
 import { toast } from 'react-toastify';
-import { fetchRelevantVideoInfo } from '../libs/youtube-video-info';
-import findMusicDuration from '../libs/find-music-duration';
+import { makeMusicEntryFromURL } from '../libs/youtube-video-info';
 
 type PlayingMusicContext = {
 	pause: () => void,
@@ -13,7 +11,7 @@ type PlayingMusicContext = {
 	playNext: () => void,
 	playPrevious: () => void,
 	currentlyPlaying: MusicEntry | null,
-	requestLoadDirectory: () => Promise<void>,
+	addMusicEntries: (entries: MusicEntry[]) => void,
 	loadMusicFromHyperlink: (link: string) => void,
 	allMusic: MusicEntry[],
 }
@@ -34,89 +32,53 @@ export function PlayingMusicProvider ({ ...props }) {
 	const [allMusic, setAllMusic] = React.useState<MusicEntry[]>([]);
 	const [musicStatus, setMusicStatus] = React.useState<MusicStatusState>(defaultMusicStatus);
 
-	// DO NOT REMOVE THIS
-	// This is related to a bug in chrome. See this repo: https://github.com/Jeansidharta/chrome-bug-report---native-file-system-api
-	const setDir = React.useState<FileSystemDirectoryHandle | null>(null)[1];
+	function removeEntry(entry: MusicEntry) {
+		setAllMusic(state => {
+			const index = state.findIndex(stateMusic => entry === stateMusic);
+			if (!index) return state;
+			const newState = [...state];
+			newState.splice(index, 1);
+			return newState;
+		});
+	}
 
-	async function requestLoadDirectory () {
-		const dir = await openDirectory().catch(e => console.error(e));
-		if (!dir) return;
-
-		const promises: Promise<File>[] = [];
-		for await(const file of dir.getEntries()) {
-			promises.push(file.getFile());
-		}
-		const files = await Promise.all(promises);
-
-		const musicEntries = files.map((file, index) => {
-			const music: LocalMusicEntry = {
-				file,
-				duration: findMusicDuration(file),
-				id: index.toString(),
-				name: file.name,
-			};
-
-			(music.duration as Promise<number>)
-				.then(duration => music.duration = duration)
-				.catch(e => {
-					console.error(e);
-					toast.error(`Unable to read file '${music.name}' (are you sure it's a music?). File will be removed from music list.`);
-					setAllMusic(state => {
-						const index = state.findIndex(stateMusic => music === stateMusic);
-						if (!index) return state;
-						const newState = [...state];
-						newState.splice(index, 1);
-						return newState;
-					})
-				});
-
-			return music;
+	async function addMusicEntries (entries: MusicEntry[]) {
+		// Calculates the duration of all music files
+		entries.forEach(entry => {
+			if (typeof entry.duration === 'function') entry.duration().catch(e => {
+				console.error(e);
+				toast.error(`Unable to read file '${entry.name}' (are you sure it's a music?). File will be removed from music list.`);
+				removeEntry(entry);
+			});
+			if (typeof entry.name === 'function') entry.name().catch(e => {
+				console.error(e);
+				toast.error(`Unable to read music name. Entry will be removed from music list.`);
+				removeEntry(entry);
+			});
 		});
 
-
-		setDir(dir);
-		setAllMusic(musicEntries.filter(e => e) as LocalMusicEntry[]);
+		setAllMusic([...allMusic, ...entries]);
 	}
 
 	async function loadMusicFromHyperlink (link: string) {
-		let url: URL;
+		let entry: YoutubeEntry;
 		try {
-			url = new URL(link);
+			entry = makeMusicEntryFromURL(link);
 		} catch (e) {
-			console.error(e);
-			toast.error('Whoops, it seems this is not a valid link!');
+			toast.error(e.message);
 			return;
 		}
-		if (url.hostname !== 'www.youtube.com') {
-			toast.error('Sorry, but I can only work with Youtube links');
-			return;
-		}
-		if (url.pathname !== '/watch') {
-			toast.error('You must give me the link of a Youtube video.');
-			return;
-		}
-		const videoId = url.searchParams.get('v');
-		if (!videoId) {
-			toast.error(`I could not identify what video you are watching... Make sure your URL has the '?v=somelargestring' thing in it`);
-			return;
-		}
-		if (findMusicById(videoId)) {
+
+		if (findMusicById(entry.id)) {
 			toast.error(`It seem this music has already been added. In this case, I will not be adding a duplicate.`);
 			return;
 		}
-		const info = await fetchRelevantVideoInfo(videoId).catch((e: Error) => {
-			toast.error(e.message);
-		});
-		if (!info) return;
 
-		const music: YoutubeEntry = {
-			id: videoId,
-			duration: info.duration,
-			audioStreams: info.streammingFormats,
-			name: info.name,
-		};
+		if (typeof entry.audioStreams === 'function') entry.audioStreams();
+		if (typeof entry.name === 'function') entry.name();
+		if (typeof entry.duration === 'function') entry.duration();
 
-		setAllMusic(state => [...state, music]);
+		setAllMusic(state => [...state, entry]);
 	}
 
 	function pause () {
@@ -172,7 +134,7 @@ export function PlayingMusicProvider ({ ...props }) {
 			play,
 			playNext,
 			playPrevious,
-			requestLoadDirectory,
+			addMusicEntries,
 			allMusic,
 			currentlyPlaying: musicStatus.currentlyPlaying,
 			loadMusicFromHyperlink,
