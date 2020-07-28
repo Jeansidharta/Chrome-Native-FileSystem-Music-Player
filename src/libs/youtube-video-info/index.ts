@@ -1,5 +1,4 @@
 import { RawYoutubeVideoInfo, YoutubeVideoInfo } from "../../models/api/youtube-info";
-import { YoutubeItem } from "../../components/modals/add-music-modal/music-modal";
 import { YoutubeEntry } from "../../models/music";
 
 const noCorsAPI = 'https://cors-anywhere.herokuapp.com/';
@@ -75,7 +74,7 @@ export function makeMusicEntryFromURL (link: string) {
 	}
 
 	// This "external variable" is here to prevent making multiple requests to youtube's servers.
-	let fetchingPromise: null | Promise<any> = null;
+	let fetchingPromise: null | ReturnType<typeof fetchRelevantVideoInfo> = null;
 
 	const infoFetcher = () => {
 		if (fetchingPromise) return fetchingPromise;

@@ -17,7 +17,9 @@ function extractMusicName (music: MusicEntry) {
 function Home () {
 	const { play, allMusic } = usePlayingMusic();
 	const { makeSortFunction, setPossibleSortOptions, selectedSortOption } = useSort();
-	const { makeSearchFunction } = useSearchString();
+	const { makeSearchFunction, searchString } = useSearchString();
+
+	const isSearching = searchString !== '';
 
 	React.useEffect(() => {
 		setPossibleSortOptions(['name']);
@@ -33,9 +35,10 @@ function Home () {
 
 	const sortKeyExtractor = makeSortKeyExtractor();
 
-	const cleanMusicList = allMusic
-		.filter(makeSearchFunction(extractMusicName))
-		.sort(makeSortFunction(sortKeyExtractor));
+	const cleanMusicList = isSearching ? allMusic
+		.filter(entry => typeof entry.name === 'string')
+		.filter(makeSearchFunction(extractMusicName as () => string))
+		.sort(makeSortFunction(sortKeyExtractor)) : allMusic;
 
 	function handleMusicClick (music: MusicEntry) {
 		play(music);

@@ -9,7 +9,9 @@ const DocumentTitleUpdater = () => {
 		if (!currentlyPlaying) {
 			document.title = 'Music';
 		} else {
-			document.title = currentlyPlaying?.name;
+			const name = currentlyPlaying?.name;
+			if (typeof name === 'string') document.title = name;
+			else if (name instanceof Promise) name.then(newName => document.title = newName);
 		}
 	}, [currentlyPlaying]);
 

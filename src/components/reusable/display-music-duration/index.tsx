@@ -1,5 +1,5 @@
 import React from 'react';
-import { MusicEntry, isLocalMusicEntry } from '../../../models/music';
+import { MusicEntry } from '../../../models/music';
 import Spinner from '../spinner';
 
 type DisplayMusicDurationProps = React.PropsWithoutRef<{
@@ -12,7 +12,6 @@ const DisplayMusicDuration: DisplayMusicDurationComponent = ({ music }) => {
 	const [duration, setDuration] = React.useState(music.duration);
 
 	React.useEffect(() => {
-		if (!isLocalMusicEntry(music)) return;
 		if (music.duration instanceof Promise) {
 			music.duration.then(setDuration).catch(e => e);
 		}

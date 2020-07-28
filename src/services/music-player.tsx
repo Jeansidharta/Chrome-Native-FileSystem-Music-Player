@@ -26,12 +26,18 @@ const MusicPlayer = () => {
 			if (musicURL) URL.revokeObjectURL(musicURL);
 			setMusicURL(newURL);
 		} else if (isYoutubeEntry(currentlyPlaying)) {
-			const streams = currentlyPlaying.audioStreams;
-			const newURL = streams[streams.length - 1].url;
-			audioElement.src = newURL;
-			audioElement.load();
-			if (musicURL) URL.revokeObjectURL(musicURL);
-			setMusicURL(null);
+			if (currentlyPlaying.audioStreams instanceof Promise) {
+				// TODO - handle promise case
+			} else if (typeof currentlyPlaying.audioStreams === 'function'){
+			} else {
+				const streams = currentlyPlaying.audioStreams;
+				const newURL = streams[streams.length - 1].url;
+				if (!newURL) throw new Error(`The youtube song '${currentlyPlaying.name}' cannot be played`);
+				audioElement.src = newURL;
+				audioElement.load();
+				if (musicURL) URL.revokeObjectURL(musicURL);
+				setMusicURL(null);
+			}
 		}
 	}
 

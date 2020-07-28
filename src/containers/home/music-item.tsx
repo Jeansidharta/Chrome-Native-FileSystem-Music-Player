@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { usePlayingMusic } from '../../contexts/playing-music';
 import { MusicEntry } from '../../models/music';
 import DisplayMusicDuration from '../../components/reusable/display-music-duration';
+import DisplayMusicName from '../../components/reusable/display-music-name';
 
 const Root = styled.div`
 	border: 1px solid rgba(0, 0, 0, 0.3);
@@ -41,7 +42,9 @@ const MusicItem: MusicItemComponent = ({ music, onClick }) => {
 
 	return (
 		<Root onClick={onClick} isSame={isSame}>
-			<MusicName>{music.name}</MusicName>
+			<MusicName>
+				<DisplayMusicName music={music} />
+			</MusicName>
 			<MusicDuration>
 				<DisplayMusicDuration music={music} />
 			</MusicDuration>
