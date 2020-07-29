@@ -68,8 +68,13 @@ const AddMusicModal: AddMusicModalComponent = ({ initialItems }) => {
 
 	const disabled = entries.length === 0;
 
+	const stopPastePropagation = (elem: HTMLElement | null) => {
+		if (!elem) return;
+		elem.addEventListener('paste', event => event.stopPropagation());
+	}
+
 	return (
-		<Root>
+		<Root ref={stopPastePropagation}>
 			<ActionButtons onNewItems={handleNewSources} />
 			<ModalItemsContainer>
 				{renderModalItems()}
