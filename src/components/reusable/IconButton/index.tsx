@@ -6,7 +6,7 @@ const Root = styled.button<React.PropsWithoutRef<{ size: number, disabled: boole
 	border-radius: 4px;
 	padding: 3px;
 	border: none;
-	box-shadow: -2px 2px 4px rgba(0, 0, 0, 0.2);
+	box-shadow: ${props => props.theme.shadows.small.normal};
 	background-color: transparent;
 	transition: 200ms;
 	outline: none;
@@ -16,18 +16,18 @@ const Root = styled.button<React.PropsWithoutRef<{ size: number, disabled: boole
 		height: ${size}px;
 	`}
 
-	${({ disabled }) => disabled ? `
+	${({ disabled, theme }) => disabled ? `
 		opacity: 0.5;
 		cursor: not-allowed;
 	` : `
 		cursor: pointer;
 		:hover, :focus {
 			transform: scale(1.1);
-			box-shadow: -3px 3px 5px rgba(0, 0, 0, 0.2);
+			box-shadow: ${theme.shadows.small.hover};
 		}
 		:active {
 			transform: scale(0.9);
-			box-shadow: -1px 1px 2px rgba(0, 0, 0, 0.2);
+			box-shadow: ${theme.shadows.small.active};
 		}
 	`}
 `;
