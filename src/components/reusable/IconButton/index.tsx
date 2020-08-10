@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Root = styled.button<React.PropsWithoutRef<{ size: number, disabled: boolean  }>>`
+const Root = styled.button<React.PropsWithoutRef<{ size: number, disabled: boolean, noHoverEffect: boolean  }>>`
 	margin: 0 8px;
 	border-radius: 4px;
 	padding: 3px;
@@ -10,17 +10,21 @@ const Root = styled.button<React.PropsWithoutRef<{ size: number, disabled: boole
 	background-color: transparent;
 	transition: 200ms;
 	outline: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 
 	${({ size }) => `
 		width: ${size}px;
 		height: ${size}px;
 	`}
 
-	${({ disabled, theme }) => disabled ? `
+	${({ disabled, theme, noHoverEffect }) => disabled ? `
 		opacity: 0.5;
 		cursor: not-allowed;
 	` : `
 		cursor: pointer;
+	` + (noHoverEffect ? `` : `
 		:hover, :focus {
 			transform: scale(1.1);
 			box-shadow: ${theme.shadows.small.hover};
@@ -29,7 +33,7 @@ const Root = styled.button<React.PropsWithoutRef<{ size: number, disabled: boole
 			transform: scale(0.9);
 			box-shadow: ${theme.shadows.small.active};
 		}
-	`}
+	`)}
 `;
 
 type IconButtonProps = React.PropsWithoutRef<{
@@ -37,6 +41,7 @@ type IconButtonProps = React.PropsWithoutRef<{
 	size?: 'small' | 'medium' | 'large' | number,
 	disabled?: boolean,
 	actionDescription: string,
+	noHoverEffect?: boolean,
 }> & React.ComponentPropsWithoutRef<'button'>;
 
 type IconButtonComponent = React.FunctionComponent<IconButtonProps>;
@@ -47,6 +52,7 @@ const IconButton: IconButtonComponent = ({
 	size = 'medium',
 	disabled = false,
 	actionDescription,
+	noHoverEffect = false,
 	...props
 }) => {
 	let sizeNumber: number;
@@ -57,7 +63,13 @@ const IconButton: IconButtonComponent = ({
 	else throw new Error(`Invalid size '${size}'`);
 
 	return (
-		<Root title={actionDescription} size={sizeNumber} disabled={disabled} {...props}>
+		<Root
+			title={actionDescription}
+			size={sizeNumber}
+			disabled={disabled}
+			noHoverEffect={noHoverEffect}
+			{...props}
+		>
 			{icon}
 		</Root>
 	);

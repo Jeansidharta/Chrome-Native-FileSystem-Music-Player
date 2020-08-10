@@ -10,10 +10,10 @@ import { useModal } from '../../../contexts/modal';
 const Root = styled.div`
 	display: flex;
 	flex-direction: column;
+	max-height: 80vh;
 `;
 
 const ModalItemsContainer= styled.div`
-	max-height: 80vh;
 	overflow-y: auto;
 	min-height: 100px;
 `;

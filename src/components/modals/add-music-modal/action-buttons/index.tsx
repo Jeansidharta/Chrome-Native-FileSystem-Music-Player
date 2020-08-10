@@ -1,11 +1,11 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-import IconButton from '../../reusable/IconButton';
-import Images from '../../../constants/images';
-import { openDirectoryAsMusicEntries } from '../../../libs/file-helpers';
-import { makeMusicEntryFromURL } from '../../../libs/youtube-video-info';
-import { toast } from 'react-toastify';
-import { MusicEntry } from '../../../models/music';
+import IconButton from '../../../reusable/IconButton';
+import Images from '../../../../constants/images';
+import { MusicEntry } from '../../../../models/music';
+import AddFolder from './add-folder';
+import AddFile from './add-file';
+import AddYoutube from './add-youtube';
 
 const Root = styled.div`
 	display: flex;
@@ -19,14 +19,11 @@ const ButtonsContainer = styled.div`
 	justify-content: flex-end;
 `;
 
-const MusicForm = styled.form`
-`;
-
-const MusicInput = styled.input.attrs(() => ({ type: 'text' }))`
+const TabElementContainer= styled.div`
+	min-height: 100px;
 	width: 100%;
-	margin-top: 8px;
-	border-radius: 4px;
-	padding: 4px 8px;
+	margin: 8px 0;
+	padding: 8px;
 `;
 
 const IconCss = css`
@@ -48,27 +45,14 @@ type ActionButtonsProps = React.PropsWithoutRef<{
 type ActionButtonsComponent = React.FunctionComponent<ActionButtonsProps>;
 
 const ActionButtons: ActionButtonsComponent = ({ onNewItems }) => {
+	const [currentTab, setCurrentTab] = React.useState<'folder' | 'file' | 'youtube' | null>(null);
 
-	async function handleAddFolderClick () {
-		const entries = await openDirectoryAsMusicEntries();
-		if (!entries) return;
-		onNewItems(entries);
-	}
-
-	async function handleAddYoutubeClick () {
-	}
-
-	function submitNewYoutubeMusic (event: React.FormEvent<HTMLFormElement>) {
-		event.preventDefault();
-		const inputElem = (event.target as HTMLFormElement)['music-url'] as HTMLInputElement;
-		const link = inputElem.value;
-		try {
-			const entry = makeMusicEntryFromURL(link);
-			onNewItems([entry]);
-		} catch (e) {
-			toast.error(e.message);
-		}
-	}
+	const tabElement = {
+		'folder': <AddFolder onNewItems={onNewItems} />,
+		'file': <AddFile onNewItems={onNewItems} />,
+		'youtube': <AddYoutube onNewItems={onNewItems} />,
+		'null': <></>,
+	}[currentTab || 'null'];
 
 	return (
 		<Root>
@@ -77,23 +61,24 @@ const ActionButtons: ActionButtonsComponent = ({ onNewItems }) => {
 					size='large'
 					actionDescription='Add a single file'
 					icon={<AddFileIcon />}
+					onClick={() => setCurrentTab('file')}
 				/>
 				<IconButton
 					size='large'
 					actionDescription='Add an entire folder'
 					icon={<AddFolderIcon />}
-					onClick={handleAddFolderClick}
+					onClick={() => setCurrentTab('folder')}
 				/>
 				<IconButton
 					size='large'
 					actionDescription='Add a youtube video'
 					icon={<AddFromYoutubeIcon />}
-					onClick={handleAddYoutubeClick}
+					onClick={() => setCurrentTab('youtube')}
 				/>
 			</ButtonsContainer>
-			<MusicForm onSubmit={submitNewYoutubeMusic}>
-				<MusicInput name='music-url' title="Youtube's video URL" />
-			</MusicForm>
+			<TabElementContainer>
+				{tabElement}
+			</TabElementContainer>
 		</Root>
 	);
 }

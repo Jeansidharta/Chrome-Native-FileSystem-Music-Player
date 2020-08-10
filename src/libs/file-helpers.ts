@@ -25,6 +25,22 @@ async function openDirectory () {
 }
 
 /**
+* This is a function that will call Chrome's API directly, which will ask the user
+* to select a single file to be read.
+*/
+async function openFile () {
+	let promise;
+	try {
+		promise = window.chooseFileSystemEntries()
+	} catch (e) {
+		toast.error('Whoops! Seems like I can\'t access the Native File System API. Make sure you\'re using Chrome and have enabled the "Native File System API" flag on chrome://flags');
+		throw e;
+	}
+	const handle = await promise;
+	return handle;
+}
+
+/**
 * This will prompt the user to open a directory, and will return all files
 * inside that directory
 * @returns An array of files, or undefined if any errors occurred
@@ -56,4 +72,18 @@ export async function openDirectoryAsMusicEntries () {
 	});
 
 	return musicEntries;
+}
+
+export async function openFileAsMusicEntry () {
+	const fileHandle = await openFile();
+	const file = await fileHandle.getFile();
+
+	const musicEntry: LocalMusicEntry = {
+		file,
+		duration: () => musicEntry.duration = findMusicDuration(file).then(duration => musicEntry.duration = duration),
+		name: file.name,
+		id: hashFile(file),
+	};
+
+	return musicEntry;
 }
