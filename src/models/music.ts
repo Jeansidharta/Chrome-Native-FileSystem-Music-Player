@@ -4,7 +4,10 @@ type AsyncType<T> = T | Promise<T> | (() => Promise<T>);
 
 export interface MusicEntry {
 	id: string | Promise<string>,
-	/** Measured in seconds */
+	/** Measured in seconds
+	* @example
+	* const duration = 100;
+	*/
 	duration: AsyncType<number>,
 	name: AsyncType<string>,
 }
