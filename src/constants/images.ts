@@ -4,6 +4,8 @@ const BaseImage = styled.img`
 	object-fit: contain;
 	width: 100%;
 	height: 100%;
+	user-drag: none;
+	user-select: none;
 	${(props: { css?: FlattenSimpleInterpolation }) => props.css || ''};
 `;
 
@@ -52,6 +54,46 @@ const Images = {
 		ArrowUp: styled(BaseImage).attrs(props => ({
 			src: '/icons/arrow-up.svg',
 			alt: 'Arrow up Icon',
+			...props,
+		}))``,
+		File: styled(BaseImage).attrs(props => ({
+			src: '/icons/file-icon.svg',
+			alt: 'A File Icon',
+			...props,
+		}))``,
+		YoutubePlayButton: styled(BaseImage).attrs(props => ({
+			src: '/icons/youtube-icon.svg',
+			alt: 'A Youtube Play Button Icon',
+			...props,
+		}))``,
+		AddFile: styled(BaseImage).attrs(props => ({
+			src: '/icons/add-file.svg',
+			alt: 'Add File Icon',
+			...props,
+		}))``,
+		AddFolder: styled(BaseImage).attrs(props => ({
+			src: '/icons/add-folder.svg',
+			alt: 'Add folder Icon',
+			...props,
+		}))``,
+		AddFromYoutube: styled(BaseImage).attrs(props => ({
+			src: '/icons/add-youtube-icon.svg',
+			alt: 'Add a Youtube Video Icon',
+			...props,
+		}))``,
+		CloseCross: styled(BaseImage).attrs(props => ({
+			src: '/icons/close.svg',
+			alt: 'Close Icon',
+			...props,
+		}))``,
+		Trash: styled(BaseImage).attrs(props => ({
+			src: '/icons/trash.svg',
+			alt: 'Trash Icon',
+			...props,
+		}))``,
+		Plus: styled(BaseImage).attrs(props => ({
+			src: '/icons/plus-icon.svg',
+			alt: 'Add',
 			...props,
 		}))``,
 	}

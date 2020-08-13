@@ -85,6 +85,7 @@ declare interface ChooseFileSystemEntriesOptions<T extends FileSystemEntryType> 
 	}[],
 }
 
+declare function chooseFileSystemEntries(): FileSystemFileHandle;
 declare function chooseFileSystemEntries<T extends FileSystemEntryType>
 	(opts?: ChooseFileSystemEntriesOptions<T>):
 	T extends 'open-directory' ? FileSystemDirectoryHandle :

@@ -1,7 +1,6 @@
 import React from 'react';
-import { MusicEntry } from '../../../models';
+import { MusicEntry } from '../../../models/music';
 import Spinner from '../spinner';
-import findMusicDuration from '../../../libs/find-music-duration';
 
 type DisplayMusicDurationProps = React.PropsWithoutRef<{
 	music: MusicEntry,
@@ -13,11 +12,9 @@ const DisplayMusicDuration: DisplayMusicDurationComponent = ({ music }) => {
 	const [duration, setDuration] = React.useState(music.duration);
 
 	React.useEffect(() => {
-		if (music.duration) return;
-		findMusicDuration(music.file).then(duration => {
-			music.duration = duration;
-			setDuration(duration);
-		}).catch(e => e);
+		if (music.duration instanceof Promise) {
+			music.duration.then(setDuration).catch(e => e);
+		}
 	}, [music.duration]);
 
 	if (typeof duration !== 'number') return <Spinner size={15} />;

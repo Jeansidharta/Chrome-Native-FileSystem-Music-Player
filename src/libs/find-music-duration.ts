@@ -13,7 +13,7 @@ async function findMusicDuration (file: File) {
 		audioElem.load();
 		audioElem.addEventListener('error', () => {
 			URL.revokeObjectURL(url);
-			reject(file);
+			reject(new Error(`Unable to read file '${file.name}' (are you sure it's a music?). File will be removed from music list.`));
 			executionsHappening--;
 		});
 		audioElem.addEventListener('loadeddata', () => {

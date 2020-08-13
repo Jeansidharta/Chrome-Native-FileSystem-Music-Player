@@ -2,6 +2,7 @@ import React from 'react';
 import { usePlayingMusic } from '../contexts/playing-music';
 import { useVolume } from '../contexts/volume';
 import { useMusicTimestamp } from '../contexts/music-timestamp';
+import { isLocalMusicEntry, isYoutubeEntry } from '../models/music';
 
 const MusicPlayer = () => {
 	const {
@@ -16,15 +17,28 @@ const MusicPlayer = () => {
 	React.useEffect(() => setAudioElemRef(audioRef), []);
 
 	async function updateURL () {
-		if (!currentlyPlaying) return;
 		const audioElement = audioRef.current as HTMLAudioElement;
 
-		const newURL = URL.createObjectURL(currentlyPlaying.file);
-		audioElement.src = newURL;
-		audioElement.load();
-
-		if (musicURL) URL.revokeObjectURL(musicURL);
-		setMusicURL(newURL);
+		if (isLocalMusicEntry(currentlyPlaying)) {
+			const newURL = URL.createObjectURL(currentlyPlaying.file);
+			audioElement.src = newURL;
+			audioElement.load();
+			if (musicURL) URL.revokeObjectURL(musicURL);
+			setMusicURL(newURL);
+		} else if (isYoutubeEntry(currentlyPlaying)) {
+			if (currentlyPlaying.audioStreams instanceof Promise) {
+				// TODO - handle promise case
+			} else if (typeof currentlyPlaying.audioStreams === 'function'){
+			} else {
+				const streams = currentlyPlaying.audioStreams;
+				const newURL = streams[streams.length - 1].url;
+				if (!newURL) throw new Error(`The youtube song '${currentlyPlaying.name}' cannot be played`);
+				audioElement.src = newURL;
+				audioElement.load();
+				if (musicURL) URL.revokeObjectURL(musicURL);
+				setMusicURL(null);
+			}
+		}
 	}
 
 	React.useEffect(() => {
@@ -39,7 +53,6 @@ const MusicPlayer = () => {
 	React.useEffect(() => { updateURL() }, [currentlyPlaying]);
 
 	React.useEffect(() => {
-		if (!musicURL) return;
 		const audioElement = audioRef.current as HTMLAudioElement;
 
 		if (playing) {

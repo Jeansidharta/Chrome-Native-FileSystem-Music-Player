@@ -4,20 +4,22 @@ import styled from 'styled-components';
 import { usePlayingMusic } from '../../contexts/playing-music';
 import { useSort } from '../../contexts/sort';
 import { useSearchString } from '../../contexts/search-string';
-import { MusicEntry } from '../../models';
+import { MusicEntry } from '../../models/music';
 
 const MainRoot = styled.main`
 	padding: 32px;
 `;
 
 function extractMusicName (music: MusicEntry) {
-	return music.file.name;
+	return music.name;
 }
 
 function Home () {
 	const { play, allMusic } = usePlayingMusic();
 	const { makeSortFunction, setPossibleSortOptions, selectedSortOption } = useSort();
-	const { makeSearchFunction } = useSearchString();
+	const { makeSearchFunction, searchString } = useSearchString();
+
+	const isSearching = searchString !== '';
 
 	React.useEffect(() => {
 		setPossibleSortOptions(['name']);
@@ -27,15 +29,16 @@ function Home () {
 		if (!selectedSortOption) {
 			return () => '';
 		} else if(selectedSortOption.name === 'name') {
-			return (music: MusicEntry) => music.file.name;
+			return (music: MusicEntry) => music.name;
 		} else throw new Error(`invalid sort option '${selectedSortOption.name}'`);
 	}
 
 	const sortKeyExtractor = makeSortKeyExtractor();
 
-	const cleanMusicList = allMusic
-		.filter(makeSearchFunction(extractMusicName))
-		.sort(makeSortFunction(sortKeyExtractor));
+	const cleanMusicList = isSearching ? allMusic
+		.filter(entry => typeof entry.name === 'string')
+		.filter(makeSearchFunction(extractMusicName as () => string))
+		.sort(makeSortFunction(sortKeyExtractor)) : allMusic;
 
 	function handleMusicClick (music: MusicEntry) {
 		play(music);

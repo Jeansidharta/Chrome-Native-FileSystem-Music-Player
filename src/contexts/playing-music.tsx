@@ -1,6 +1,7 @@
 import React from 'react';
-import { MusicEntry } from '../models';
-import { openDirectory } from '../libs/file-helpers';
+import { MusicEntry, YoutubeEntry } from '../models/music';
+import { toast } from 'react-toastify';
+import { makeMusicEntryFromURL } from '../libs/youtube-video-info';
 
 type PlayingMusicContext = {
 	pause: () => void,
@@ -10,8 +11,8 @@ type PlayingMusicContext = {
 	playNext: () => void,
 	playPrevious: () => void,
 	currentlyPlaying: MusicEntry | null,
-	requestLoadDirectory: () => Promise<void>,
-	updateMusicDuration: (music: MusicEntry, duration: number) => void,
+	addMusicEntries: (entries: MusicEntry[]) => void,
+	loadMusicFromHyperlink: (link: string) => void,
 	allMusic: MusicEntry[],
 }
 
@@ -31,24 +32,65 @@ export function PlayingMusicProvider ({ ...props }) {
 	const [allMusic, setAllMusic] = React.useState<MusicEntry[]>([]);
 	const [musicStatus, setMusicStatus] = React.useState<MusicStatusState>(defaultMusicStatus);
 
-	// DO NOT REMOVE THIS
-	// This is related to a bug in chrome. See this repo: https://github.com/Jeansidharta/chrome-bug-report---native-file-system-api
-	const setDir = React.useState<FileSystemDirectoryHandle | null>(null)[1];
+	/** Removes an entry from the `allMusic` list. It'll use the entry's ID to identify it */
+	function removeEntry(entry: MusicEntry) {
+		setAllMusic(state => {
+			const index = state.findIndex(stateMusic => entry.id === stateMusic.id);
+			if (index === -1) {
+				console.warn('Warning: removeEntry could not find an entry to remove. This is probably a bug in  your code');
+				return state;
+			}
+			const newState = [...state];
+			newState.splice(index, 1);
+			return newState;
+		});
+	}
 
-	async function requestLoadDirectory () {
-		const dir = await openDirectory().catch(e => console.error(e));
-		if (!dir) return;
+	async function addMusicEntries (entries: MusicEntry[]) {
+		// Calculates the duration of all music files
+		entries.forEach(async entry => {
+			try {
+				if (typeof entry.duration === 'function') {
+					await entry.duration();
+				}
+				if (typeof entry.name === 'function') await entry.name().catch(() => {
+					throw new Error(`Unable to read music name. Entry will be removed from music list.`);
+				});
+			} catch (e) {
+				console.error(e);
+				toast.error(e.message);
+				removeEntry(entry);
+			}
+		});
 
-		const promises: Promise<File>[] = [];
-		for await(const file of dir.getEntries()) {
-			promises.push(file.getFile());
+		setAllMusic([...allMusic, ...entries]);
+	}
+
+	async function loadMusicFromHyperlink (link: string) {
+		let entry: YoutubeEntry;
+		try {
+			entry = makeMusicEntryFromURL(link);
+		} catch (e) {
+			toast.error(e.message);
+			return;
 		}
-		const files = await Promise.all(promises);
 
-		const musicEntries = files.map(file => ({ file, duration: null }));
+		if (findMusicById(entry.id)) {
+			toast.error(`It seem this music has already been added. In this case, I will not be adding a duplicate.`);
+			return;
+		}
 
-		setDir(dir);
-		setAllMusic(musicEntries.filter(e => e) as MusicEntry[]);
+		function handleError (error: Error) {
+			console.error(error);
+			toast.error(error.message);
+			removeEntry(entry);
+		}
+
+		if (typeof entry.audioStreams === 'function') entry.audioStreams().catch(handleError);
+		if (typeof entry.name === 'function') entry.name().catch(handleError);
+		if (typeof entry.duration === 'function') entry.duration().catch(handleError);
+
+		setAllMusic(state => [...state, entry]);
 	}
 
 	function pause () {
@@ -64,7 +106,11 @@ export function PlayingMusicProvider ({ ...props }) {
 	}
 
 	function findMusicIndex (music: MusicEntry) {
-		return allMusic.findIndex(f => f.file === music.file);
+		return allMusic.findIndex(f => f.id === music.id);
+	}
+
+	function findMusicById (id: string) {
+		return allMusic.find(f => f.id === id);
 	}
 
 	function playNext () {
@@ -92,13 +138,6 @@ export function PlayingMusicProvider ({ ...props }) {
 		return true;
 	}
 
-	function updateMusicDuration (music: MusicEntry, duration: number) {
-		const musicIndex = findMusicIndex(music);
-		const newAllMusic = [...allMusic];
-		newAllMusic[musicIndex] = { ...music, duration };
-		setAllMusic(newAllMusic);
-	}
-
 	return (
 		<playingMusicContext.Provider {...props} value={{
 			pause,
@@ -107,10 +146,10 @@ export function PlayingMusicProvider ({ ...props }) {
 			play,
 			playNext,
 			playPrevious,
-			requestLoadDirectory,
+			addMusicEntries,
 			allMusic,
-			updateMusicDuration,
 			currentlyPlaying: musicStatus.currentlyPlaying,
+			loadMusicFromHyperlink,
 		}} />
 	);
 }
