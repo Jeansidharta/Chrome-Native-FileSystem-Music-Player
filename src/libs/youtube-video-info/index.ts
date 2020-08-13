@@ -86,9 +86,10 @@ export function makeMusicEntryFromURL (link: string) {
 			return info;
 		});
 
-		entry.duration = fetchingPromise.then(info => info.duration);
-		entry.audioStreams = fetchingPromise.then(info => info.streammingFormats);
-		entry.name = fetchingPromise.then(info => info.name);
+		entry.duration = fetchingPromise.then(info => info.duration).catch(e => e);
+		entry.audioStreams = fetchingPromise.then(info => info.streammingFormats).catch(e => e);
+		entry.name = fetchingPromise.then(info => info.name).catch(e => e);
+
 		return fetchingPromise;
 	}
 

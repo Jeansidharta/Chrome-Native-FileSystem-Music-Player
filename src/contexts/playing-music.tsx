@@ -32,10 +32,14 @@ export function PlayingMusicProvider ({ ...props }) {
 	const [allMusic, setAllMusic] = React.useState<MusicEntry[]>([]);
 	const [musicStatus, setMusicStatus] = React.useState<MusicStatusState>(defaultMusicStatus);
 
+	/** Removes an entry from the `allMusic` list. It'll use the entry's ID to identify it */
 	function removeEntry(entry: MusicEntry) {
 		setAllMusic(state => {
-			const index = state.findIndex(stateMusic => entry === stateMusic);
-			if (!index) return state;
+			const index = state.findIndex(stateMusic => entry.id === stateMusic.id);
+			if (index === -1) {
+				console.warn('Warning: removeEntry could not find an entry to remove. This is probably a bug in  your code');
+				return state;
+			}
 			const newState = [...state];
 			newState.splice(index, 1);
 			return newState;
@@ -44,17 +48,19 @@ export function PlayingMusicProvider ({ ...props }) {
 
 	async function addMusicEntries (entries: MusicEntry[]) {
 		// Calculates the duration of all music files
-		entries.forEach(entry => {
-			if (typeof entry.duration === 'function') entry.duration().catch(e => {
+		entries.forEach(async entry => {
+			try {
+				if (typeof entry.duration === 'function') {
+					await entry.duration();
+				}
+				if (typeof entry.name === 'function') await entry.name().catch(() => {
+					throw new Error(`Unable to read music name. Entry will be removed from music list.`);
+				});
+			} catch (e) {
 				console.error(e);
-				toast.error(`Unable to read file '${entry.name}' (are you sure it's a music?). File will be removed from music list.`);
+				toast.error(e.message);
 				removeEntry(entry);
-			});
-			if (typeof entry.name === 'function') entry.name().catch(e => {
-				console.error(e);
-				toast.error(`Unable to read music name. Entry will be removed from music list.`);
-				removeEntry(entry);
-			});
+			}
 		});
 
 		setAllMusic([...allMusic, ...entries]);
@@ -74,9 +80,15 @@ export function PlayingMusicProvider ({ ...props }) {
 			return;
 		}
 
-		if (typeof entry.audioStreams === 'function') entry.audioStreams();
-		if (typeof entry.name === 'function') entry.name();
-		if (typeof entry.duration === 'function') entry.duration();
+		function handleError (error: Error) {
+			console.error(error);
+			toast.error(error.message);
+			removeEntry(entry);
+		}
+
+		if (typeof entry.audioStreams === 'function') entry.audioStreams().catch(handleError);
+		if (typeof entry.name === 'function') entry.name().catch(handleError);
+		if (typeof entry.duration === 'function') entry.duration().catch(handleError);
 
 		setAllMusic(state => [...state, entry]);
 	}
