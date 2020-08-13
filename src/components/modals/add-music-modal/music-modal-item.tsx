@@ -1,6 +1,7 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import Images from '../../../constants/images';
+import IconButton from '../../reusable/IconButton';
 
 const Root = styled.div`
 	display: flex;
@@ -27,21 +28,31 @@ const iconsCss = css`
 
 const YoutubeIcon = styled(Images.Icons.YoutubePlayButton).attrs(() => ({ css: iconsCss }))``;
 const FileIcon = styled(Images.Icons.File).attrs(() => ({ css: iconsCss }))``;
+const CloseIcon = styled(Images.Icons.Trash).attrs(() => ({ css: iconsCss }))`
+	width: 16px;
+	height: 16px;
+`;
 
 type MusicModalItemProps = React.PropsWithoutRef<{
 	name: string,
 	origin: 'local' | 'youtube',
+	onDelete?: () => void,
 }>;
 
 type MusicModalItemComponent = React.FunctionComponent<MusicModalItemProps>;
 
-const MusicModalItem: MusicModalItemComponent = ({ name, origin }) => {
+const MusicModalItem: MusicModalItemComponent = ({ name, origin, onDelete }) => {
 	return (
 		<Root title={name}>
 			<Name>{name}</Name>
 			{ origin === 'local'
 				? <FileIcon title='Originated from your local files' />
 				: <YoutubeIcon title='Originated from youtube' /> }
+			<IconButton
+				onClick={onDelete}
+				icon={<CloseIcon />}
+				actionDescription='Remove file'
+			/>
 		</Root>
 	);
 }

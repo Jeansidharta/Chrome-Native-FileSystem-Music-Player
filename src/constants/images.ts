@@ -81,6 +81,21 @@ const Images = {
 			alt: 'Add a Youtube Video Icon',
 			...props,
 		}))``,
+		CloseCross: styled(BaseImage).attrs(props => ({
+			src: '/icons/close.svg',
+			alt: 'Close Icon',
+			...props,
+		}))``,
+		Trash: styled(BaseImage).attrs(props => ({
+			src: '/icons/trash.svg',
+			alt: 'Trash Icon',
+			...props,
+		}))``,
+		Plus: styled(BaseImage).attrs(props => ({
+			src: '/icons/plus-icon.svg',
+			alt: 'Add',
+			...props,
+		}))``,
 	}
 }
 

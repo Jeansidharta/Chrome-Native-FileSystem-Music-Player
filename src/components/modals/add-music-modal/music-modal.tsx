@@ -58,10 +58,26 @@ const AddMusicModal: AddMusicModalComponent = ({ initialItems }) => {
 
 	function renderModalItems () {
 		return entries.map((item, index) => {
+			const handleDelete = () => {
+				const newEntries = [...entries];
+				newEntries.splice(index, 1);
+				setEntries(newEntries);
+			}
+
 			if (isYoutubeEntry(item)) {
-				return <MusicModalItem name='teste' origin='youtube' key={index} />;
+				return <MusicModalItem
+					onDelete={handleDelete}
+					name={item.id}
+					origin='youtube'
+					key={index}
+				/>;
 			} else if (isLocalMusicEntry(item)) {
-				return <MusicModalItem name={item.name} origin='local' key={index} />;
+				return <MusicModalItem
+					onDelete={handleDelete}
+					name={item.name}
+					origin='local'
+					key={index}
+				/>;
 			} else return null;
 		});
 	}
