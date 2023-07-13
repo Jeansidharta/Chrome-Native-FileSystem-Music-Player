@@ -1,6 +1,8 @@
-# Web Music Player
+# ⚠️ Deprecation warning ⚠️
 
-A live version of this project can be found [here](https://music-player.sidharta.xyz/).
+This project probably does not work. It was first developen using an extremely experimental chrome feature that has changed a lot. This probably does not work anymore. I'll keep this repository as a future reference for myself. Anyone is free to use and clone it
+
+# Web Music Player
 
 Please, make sure you match at least the first two pre-requisites described below before trying to use the project.
 
@@ -21,8 +23,8 @@ Third, you must have NodeJS and NPM installed.
 ## How to run
 
 Run the following commands:
+
 - `git clone https://github.com/Jeansidharta/Chrome-Native-FileSystem-Music-Player` - Clones the project
 - `cd Chrome-Native-FileSystem-Music-Player` - Open the project folder
 - `npm install` - Installs the project's dependencies
 - `npm run dev` - runs the project
-
